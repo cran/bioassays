@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Anwar Azad Palakkan, Jamie Davies" />
+
+
+<title>Vignette of package bioassays</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Vignette of package bioassays</h1>
+<h4 class="author">Anwar Azad Palakkan, Jamie Davies</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(bioassays)</a></code></pre></div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In a cell culture lab various cellular assays are performed. The package “bioassays” will help to analyse the results of these experiments performed in multiwell plates. The usage of various functions in the “bioassays” package is provided in this article.</p>
+<p>The functions in this package can be used to summarise data from any multiwell plate, and by incorporating them in a loop several plates can be analyzed automatically. Two examples are also provided in the article.</p>
+</div>
+<div id="prerequisite" class="section level1">
+<h1>prerequisite</h1>
+<p>The output reading from the instrument (eg.spectrophotometer) should be in a matrix format. An example data (csv format) is shown below. If the data is in .xls/.xlsx format <code>read_excel</code> function in ‘readxl’ package can be used.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">data</span>(rawdata96)</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">head</span>(rawdata96)</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt;   X    X1    X2    X3    X4    X5    X6    X7    X8    X9   X10   X11   X12</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt; 1 A 0.659 0.649 0.598 0.601 0.541 0.553 0.568 0.519 0.576 0.575 0.583 0.504</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; 2 B 0.442 0.455 0.586 0.563 0.525 0.548 0.511 0.503 0.533 0.559 0.529 0.535</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; 3 C 0.278 0.266 0.491 0.562 0.510 0.473 0.467 0.433 0.382 0.457 0.475 0.510</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; 4 D 0.197 0.199 0.452 0.456 0.421 0.431 0.409 0.401 0.458 0.412 0.408 0.403</span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; 5 E 0.177 0.174 0.447 0.437 0.392 0.412 0.368 0.396 0.397 0.358 0.360 0.393</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; 6 F 0.141 0.137 0.277 0.337 0.294 0.279 0.257 0.263 0.262 0.292 0.280 0.300</span></a></code></pre></div>
+<p>A metadata is needed for the whole experiment. “row” and “col” columns are must in the metafile to indicate the location of well. An example is given below.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">data</span>(metafile96)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">head</span>(metafile96)</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;   row col position type     id concentration dilution</span></a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt; 1   A   1      A01 STD1    STD            25       NA</span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; 2   A   2      A02 STD1    STD            25       NA</span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt; 3   A   3      A03   S1 Sample            NA       NA</span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt; 4   A   4      A04   S1 Sample            NA       NA</span></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt; 5   A   5      A05   S1 Sample            NA       NA</span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt; 6   A   6      A06   S1 Sample            NA       NA</span></a></code></pre></div>
+</div>
+<div id="functions" class="section level1">
+<h1>Functions</h1>
+<div id="function-extract_filename" class="section level2">
+<h2>1. Function: extract_filename</h2>
+<p><code>extract_filename</code> help to extract information from the file name. syntax is <code>extract_filename(filename,split = &quot; &quot;,end = &quot;.csv&quot;, remove = &quot; &quot;, sep=&quot;-&quot;)</code>. <strong>filename</strong> is the file name. <strong>split</strong> is the portions at which the name has to be split (default is space &quot; “). <strong>end</strong> is the extension of file name that need to be removed (default is”.csv“). <strong>remove</strong> is the portion from the file name that need to be omitted after splitting (default is space” “). <strong>sep</strong> add a symbol between separate sections, default is”-&quot;.</p>
+<p>This function is useful for extracting specific information from file names, like compound name, plate number etc, to provide appropriate analysis.</p>
+<p>For e.g.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">extract_filename</span>(<span class="st">&quot;L HEPG2 P3 72HRS.csv&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; [1] &quot;L HEPG2 P3 72HRS.csv&quot; &quot;L-HEPG2-P3-72HRS&quot;     &quot;L&quot;                   </span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; [4] &quot;HEPG2&quot;                &quot;P3&quot;                   &quot;72HRS&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">extract_filename</span>(<span class="st">&quot;L HEPG2 P3 72HRS.csv&quot;</span>, <span class="dt">split=</span><span class="st">&quot; &quot;</span>,<span class="dt">end=</span><span class="st">&quot;.csv&quot;</span>,<span class="dt">remove=</span><span class="st">&quot;L&quot;</span>,<span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; [1] &quot;L HEPG2 P3 72HRS.csv&quot; &quot;HEPG2P372HRS&quot;         &quot;HEPG2&quot;               </span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; [4] &quot;P3&quot;                   &quot;72HRS&quot;</span></a></code></pre></div>
+</div>
+<div id="function-rmodd_summary" class="section level2">
+<h2>2. Function: rmodd_summary</h2>
+<p><code>rmodd_summary</code> help to remove the outliers and summarise the values from a given set of function. Syntax is <code>rmodd_summary(x, rm = &quot;FALSE&quot;, strict= &quot;FALSE&quot;, cutoff=80,n=3)</code>. <strong>x</strong> is a numeric vector. <strong>rm = TRUE</strong> if want to remove outliers. If <strong>strict = FALSE</strong> those values above/below 1.5 IQR is omitted (outliers omitted). If <strong>strict = TRUE</strong> more aggresive outlier removal is used to bring %cv below <strong>cutoff</strong>. <strong>n</strong> is the minimum number of samples you need per group if more aggresive outlier removal is used.</p>
+<p>For e.g.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">x&lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">1.01</span>,<span class="fl">0.98</span>,<span class="fl">0.6</span>,<span class="fl">0.54</span>,<span class="fl">0.6</span>,<span class="fl">0.6</span>,<span class="fl">0.4</span>,<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="kw">rmodd_summary</span>(x, <span class="dt">rm =</span> <span class="st">&quot;FALSE&quot;</span>, <span class="dt">strict=</span> <span class="st">&quot;FALSE&quot;</span>, <span class="dt">cutoff=</span><span class="dv">80</span>,<span class="dt">n=</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;       mean     median          n         sd         cv </span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;  0.9662500  0.6000000  8.0000000  0.8487796 87.8426480</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">rmodd_summary</span>(x, <span class="dt">rm =</span> <span class="st">&quot;TRUE&quot;</span>, <span class="dt">strict=</span> <span class="st">&quot;FALSE&quot;</span>, <span class="dt">cutoff=</span><span class="dv">80</span>,<span class="dt">n=</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;       mean     median          n         sd         cv </span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt;  0.6757143  0.6000000  7.0000000  0.2294818 33.9613684</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">rmodd_summary</span>(x, <span class="dt">rm =</span> <span class="st">&quot;TRUE&quot;</span>, <span class="dt">strict=</span> <span class="st">&quot;TRUE&quot;</span>, <span class="dt">cutoff=</span><span class="dv">20</span>,<span class="dt">n=</span><span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;       mean     median          n         sd         cv </span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt;  0.7216667  0.6000000  6.0000000  0.2132057 29.5435138</span></a></code></pre></div>
+</div>
+<div id="function-data2plateformat" class="section level2">
+<h2>3. Function: data2plateformat</h2>
+<p><code>data2plateformat</code> convert the data (eg: readings from a 96 well plate) to appropriate matrix format. Syntax is <code>data2plateformat(data, platetype = 96)</code>. <strong>data</strong> is the data to be formatted. <strong>platetype</strong> is the plate from which the data is coming. It can take 6, 12, 24, 96, 384 values to represent the corresponding multiwell.</p>
+<p>For e.g. To rename columns and rows of ‘rawdata96’ to right format.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">rawdata&lt;-<span class="kw">data2plateformat</span>(rawdata96,<span class="dt">platetype =</span> <span class="dv">96</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="kw">head</span>(rawdata)</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co">#&gt;       1     2     3     4     5     6     7     8     9    10    11    12</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt; A 0.659 0.649 0.598 0.601 0.541 0.553 0.568 0.519 0.576 0.575 0.583 0.504</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="co">#&gt; B 0.442 0.455 0.586 0.563 0.525 0.548 0.511 0.503 0.533 0.559 0.529 0.535</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="co">#&gt; C 0.278 0.266 0.491 0.562 0.510 0.473 0.467 0.433 0.382 0.457 0.475 0.510</span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="co">#&gt; D 0.197 0.199 0.452 0.456 0.421 0.431 0.409 0.401 0.458 0.412 0.408 0.403</span></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="co">#&gt; E 0.177 0.174 0.447 0.437 0.392 0.412 0.368 0.396 0.397 0.358 0.360 0.393</span></a>
+<a class="sourceLine" id="cb9-9" title="9"><span class="co">#&gt; F 0.141 0.137 0.277 0.337 0.294 0.279 0.257 0.263 0.262 0.292 0.280 0.300</span></a></code></pre></div>
+</div>
+<div id="function-plate2df" class="section level2">
+<h2>4. Function: plate2df</h2>
+<p><code>plate2df</code> format matrix type 2D data of multi well plates as a dataframe. The function uses column names and row names of ‘datamatrix’ (2D data of a mutli well plate) and generate a dataframe with row, col (column) and position indices. The ‘value’ column represent corresponding value in the ‘datamarix’..</p>
+<p>Syntax is <code>plate2df(datamatrix)</code>. <strong>datamatrix</strong> is the data in matrix format.</p>
+<p>For eg.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">OD_df &lt;-<span class="st"> </span><span class="kw">plate2df</span>(rawdata)</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="kw">head</span>(OD_df)</a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt;   row col position value</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601</span></a>
+<a class="sourceLine" id="cb10-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541</span></a>
+<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553</span></a></code></pre></div>
+</div>
+<div id="function-matrix96" class="section level2">
+<h2>5. Function: matrix96</h2>
+<p><code>matrix96</code> help to convert a dataframe in to a matrix format. Syntax is <code>matrix96(dataframe,column,rm=&quot;FALSE&quot;)</code>. <strong>dataframe</strong> is the dataframe to be formatted. The dataframe should have a “row” and “col” columns to function smoothly. <strong>column</strong> is the name of column that need be converted as a matrix.. If <strong>rm= “TRUE”</strong> then -ve and NA are assigned as 0.</p>
+<p>For e.g.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">matrix96</span>(OD_df,<span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="co">#&gt;       1     2     3     4     5     6     7     8     9    10    11    12</span></a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt; A 0.659 0.649 0.598 0.601 0.541 0.553 0.568 0.519 0.576 0.575 0.583 0.504</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="co">#&gt; B 0.442 0.455 0.586 0.563 0.525 0.548 0.511 0.503 0.533 0.559 0.529 0.535</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="co">#&gt; C 0.278 0.266 0.491 0.562 0.510 0.473 0.467 0.433 0.382 0.457 0.475 0.510</span></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="co">#&gt; D 0.197 0.199 0.452 0.456 0.421 0.431 0.409 0.401 0.458 0.412 0.408 0.403</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="co">#&gt; E 0.177 0.174 0.447 0.437 0.392 0.412 0.368 0.396 0.397 0.358 0.360 0.393</span></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="co">#&gt; F 0.141 0.137 0.277 0.337 0.294 0.279 0.257 0.263 0.262 0.292 0.280 0.300</span></a>
+<a class="sourceLine" id="cb11-9" title="9"><span class="co">#&gt; G 0.122 0.118 0.300 0.288 0.293 0.251 0.245 0.270 0.261 0.259 0.271 0.271</span></a>
+<a class="sourceLine" id="cb11-10" title="10"><span class="co">#&gt; H 0.107 0.102 0.320 0.340 0.319 0.270 0.262 0.277 0.294 0.278 0.307 0.316</span></a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">matrix96</span>(OD_df,<span class="st">&quot;position&quot;</span>)</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="co">#&gt;   1     2     3     4     5     6     7     8     9     10    11    12   </span></a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="co">#&gt; A &quot;A01&quot; &quot;A02&quot; &quot;A03&quot; &quot;A04&quot; &quot;A05&quot; &quot;A06&quot; &quot;A07&quot; &quot;A08&quot; &quot;A09&quot; &quot;A10&quot; &quot;A11&quot; &quot;A12&quot;</span></a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="co">#&gt; B &quot;B01&quot; &quot;B02&quot; &quot;B03&quot; &quot;B04&quot; &quot;B05&quot; &quot;B06&quot; &quot;B07&quot; &quot;B08&quot; &quot;B09&quot; &quot;B10&quot; &quot;B11&quot; &quot;B12&quot;</span></a>
+<a class="sourceLine" id="cb12-5" title="5"><span class="co">#&gt; C &quot;C01&quot; &quot;C02&quot; &quot;C03&quot; &quot;C04&quot; &quot;C05&quot; &quot;C06&quot; &quot;C07&quot; &quot;C08&quot; &quot;C09&quot; &quot;C10&quot; &quot;C11&quot; &quot;C12&quot;</span></a>
+<a class="sourceLine" id="cb12-6" title="6"><span class="co">#&gt; D &quot;D01&quot; &quot;D02&quot; &quot;D03&quot; &quot;D04&quot; &quot;D05&quot; &quot;D06&quot; &quot;D07&quot; &quot;D08&quot; &quot;D09&quot; &quot;D10&quot; &quot;D11&quot; &quot;D12&quot;</span></a>
+<a class="sourceLine" id="cb12-7" title="7"><span class="co">#&gt; E &quot;E01&quot; &quot;E02&quot; &quot;E03&quot; &quot;E04&quot; &quot;E05&quot; &quot;E06&quot; &quot;E07&quot; &quot;E08&quot; &quot;E09&quot; &quot;E10&quot; &quot;E11&quot; &quot;E12&quot;</span></a>
+<a class="sourceLine" id="cb12-8" title="8"><span class="co">#&gt; F &quot;F01&quot; &quot;F02&quot; &quot;F03&quot; &quot;F04&quot; &quot;F05&quot; &quot;F06&quot; &quot;F07&quot; &quot;F08&quot; &quot;F09&quot; &quot;F10&quot; &quot;F11&quot; &quot;F12&quot;</span></a>
+<a class="sourceLine" id="cb12-9" title="9"><span class="co">#&gt; G &quot;G01&quot; &quot;G02&quot; &quot;G03&quot; &quot;G04&quot; &quot;G05&quot; &quot;G06&quot; &quot;G07&quot; &quot;G08&quot; &quot;G09&quot; &quot;G10&quot; &quot;G11&quot; &quot;G12&quot;</span></a>
+<a class="sourceLine" id="cb12-10" title="10"><span class="co">#&gt; H &quot;H01&quot; &quot;H02&quot; &quot;H03&quot; &quot;H04&quot; &quot;H05&quot; &quot;H06&quot; &quot;H07&quot; &quot;H08&quot; &quot;H09&quot; &quot;H10&quot; &quot;H11&quot; &quot;H12&quot;</span></a></code></pre></div>
+</div>
+<div id="function-plate_metadata" class="section level2">
+<h2>6. Function: plate_metadata</h2>
+<p><code>plate_metadata</code> combine the plate specific information (like compound used, standard concentration, dilution of samples, etc) and metadata, to produce unique plate metadata. Syntax is <code>plate_metadata(plate_details, metadata,mergeby=&quot;type&quot;)</code>. <strong>plate details</strong> is the plate specific information that need to be added to metadata. <strong>metadata</strong> is the metadata for whole experiment. <strong>mergeby</strong> is the column that is common to both metadata and plate_meta (this column will be used for merging the information).</p>
+<p>For eg. An incomplete meta data</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">head</span>(metafile96)</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt;   row col position type     id concentration dilution</span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt; 1   A   1      A01 STD1    STD            25       NA</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt; 2   A   2      A02 STD1    STD            25       NA</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co">#&gt; 3   A   3      A03   S1 Sample            NA       NA</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt; 4   A   4      A04   S1 Sample            NA       NA</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; 5   A   5      A05   S1 Sample            NA       NA</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt; 6   A   6      A06   S1 Sample            NA       NA</span></a></code></pre></div>
+<p>Plate specific details are.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">plate_details &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;compound&quot;</span> =<span class="st"> &quot;Taxol&quot;</span>,</a>
+<a class="sourceLine" id="cb14-2" title="2">                <span class="st">&quot;concentration&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.00</span>,<span class="fl">0.01</span>,<span class="fl">0.02</span>,<span class="fl">0.05</span>,<span class="fl">0.10</span>,<span class="fl">1.00</span>,<span class="fl">5.00</span>,<span class="fl">10.00</span>),</a>
+<a class="sourceLine" id="cb14-3" title="3">                <span class="st">&quot;type&quot;</span> =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;S1&quot;</span>,<span class="st">&quot;S2&quot;</span>,<span class="st">&quot;S3&quot;</span>,<span class="st">&quot;S4&quot;</span>,<span class="st">&quot;S5&quot;</span>,<span class="st">&quot;S6&quot;</span>,<span class="st">&quot;S7&quot;</span>,<span class="st">&quot;S8&quot;</span>),</a>
+<a class="sourceLine" id="cb14-4" title="4">                <span class="st">&quot;dilution&quot;</span> =<span class="st"> </span><span class="dv">1</span>)</a></code></pre></div>
+<p>Using plate specific info, the metadata can be filled by calling <code>plate_metadata</code> function.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">plate_meta&lt;-<span class="kw">plate_metadata</span>(plate_details,metafile96,<span class="dt">mergeby=</span><span class="st">&quot;type&quot;</span>)</a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="kw">head</span>(plate_meta)</a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="co">#&gt;   row col type position     id dilution concentration compound</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="co">#&gt; 1   A   1 STD1      A01    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="co">#&gt; 2   A   2 STD1      A02    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="co">#&gt; 3   A   3   S1      A03 Sample        1             0    Taxol</span></a>
+<a class="sourceLine" id="cb15-7" title="7"><span class="co">#&gt; 4   A   4   S1      A04 Sample        1             0    Taxol</span></a>
+<a class="sourceLine" id="cb15-8" title="8"><span class="co">#&gt; 5   A   5   S1      A05 Sample        1             0    Taxol</span></a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="co">#&gt; 6   A   6   S1      A06 Sample        1             0    Taxol</span></a></code></pre></div>
+<p>To join both plate_meta and OD_df, <code>innerjoin</code> (is a dplyr function) can be used.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">data_DF&lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(OD_df,plate_meta,<span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;row&quot;</span>,<span class="st">&quot;col&quot;</span>,<span class="st">&quot;position&quot;</span>))</a>
+<a class="sourceLine" id="cb16-2" title="2"></a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="kw">head</span>(data_DF)</a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="co">#&gt;   row col position value type     id dilution concentration compound</span></a>
+<a class="sourceLine" id="cb16-5" title="5"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb16-6" title="6"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb16-7" title="7"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        1             0    Taxol</span></a>
+<a class="sourceLine" id="cb16-8" title="8"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        1             0    Taxol</span></a>
+<a class="sourceLine" id="cb16-9" title="9"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        1             0    Taxol</span></a>
+<a class="sourceLine" id="cb16-10" title="10"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        1             0    Taxol</span></a></code></pre></div>
+</div>
+<div id="function-heatplate" class="section level2">
+<h2>7. Function: heatplate</h2>
+<p><code>heatplate</code> help to create a heatmap of multiwell plate. The syntax is <code>heatplate(datamatrix,name,size=7.5)</code>. <strong>datamatrix</strong> is the data in matrix format. An easy way to create this is by calling ‘matrix96’ as explained before. <strong>name</strong> is the name to be given for heatmap, <strong>size</strong> is the size of each well in the heatmap (default is 7.5).</p>
+<p>This function will give a heatmap of normalized values if the ‘variable’ is numeric. If it is a factorial variable, it will simple provide a coloured categorical plot.</p>
+<p>eg 1. Categorical plot</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"> datamatrix&lt;-<span class="kw">matrix96</span>(metafile96,<span class="st">&quot;id&quot;</span>)</a>
+<a class="sourceLine" id="cb17-2" title="2">datamatrix</a>
+<a class="sourceLine" id="cb17-3" title="3"><span class="co">#&gt;   1       2       3        4        5        6        7        8       </span></a>
+<a class="sourceLine" id="cb17-4" title="4"><span class="co">#&gt; A &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-5" title="5"><span class="co">#&gt; B &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-6" title="6"><span class="co">#&gt; C &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-7" title="7"><span class="co">#&gt; D &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-8" title="8"><span class="co">#&gt; E &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-9" title="9"><span class="co">#&gt; F &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-10" title="10"><span class="co">#&gt; G &quot;STD&quot;   &quot;STD&quot;   &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-11" title="11"><span class="co">#&gt; H &quot;Blank&quot; &quot;Blank&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-12" title="12"><span class="co">#&gt;   9        10       11       12      </span></a>
+<a class="sourceLine" id="cb17-13" title="13"><span class="co">#&gt; A &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-14" title="14"><span class="co">#&gt; B &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-15" title="15"><span class="co">#&gt; C &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-16" title="16"><span class="co">#&gt; D &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-17" title="17"><span class="co">#&gt; E &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-18" title="18"><span class="co">#&gt; F &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-19" title="19"><span class="co">#&gt; G &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a>
+<a class="sourceLine" id="cb17-20" title="20"><span class="co">#&gt; H &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot; &quot;Sample&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">heatplate</span>(datamatrix,<span class="st">&quot;Plate 1&quot;</span>, <span class="dt">size=</span><span class="dv">5</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>eg 2. Heatmap</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">rawdata&lt;-<span class="kw">data2plateformat</span>(rawdata96,<span class="dt">platetype =</span> <span class="dv">96</span>)</a>
+<a class="sourceLine" id="cb19-2" title="2">OD_df&lt;-<span class="st"> </span><span class="kw">plate2df</span>(rawdata)</a>
+<a class="sourceLine" id="cb19-3" title="3">data&lt;-<span class="kw">matrix96</span>(OD_df,<span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb19-4" title="4">data</a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt;       1     2     3     4     5     6     7     8     9    10    11    12</span></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; A 0.659 0.649 0.598 0.601 0.541 0.553 0.568 0.519 0.576 0.575 0.583 0.504</span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt; B 0.442 0.455 0.586 0.563 0.525 0.548 0.511 0.503 0.533 0.559 0.529 0.535</span></a>
+<a class="sourceLine" id="cb19-8" title="8"><span class="co">#&gt; C 0.278 0.266 0.491 0.562 0.510 0.473 0.467 0.433 0.382 0.457 0.475 0.510</span></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="co">#&gt; D 0.197 0.199 0.452 0.456 0.421 0.431 0.409 0.401 0.458 0.412 0.408 0.403</span></a>
+<a class="sourceLine" id="cb19-10" title="10"><span class="co">#&gt; E 0.177 0.174 0.447 0.437 0.392 0.412 0.368 0.396 0.397 0.358 0.360 0.393</span></a>
+<a class="sourceLine" id="cb19-11" title="11"><span class="co">#&gt; F 0.141 0.137 0.277 0.337 0.294 0.279 0.257 0.263 0.262 0.292 0.280 0.300</span></a>
+<a class="sourceLine" id="cb19-12" title="12"><span class="co">#&gt; G 0.122 0.118 0.300 0.288 0.293 0.251 0.245 0.270 0.261 0.259 0.271 0.271</span></a>
+<a class="sourceLine" id="cb19-13" title="13"><span class="co">#&gt; H 0.107 0.102 0.320 0.340 0.319 0.270 0.262 0.277 0.294 0.278 0.307 0.316</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"><span class="kw">heatplate</span>(data,<span class="st">&quot;Plate 1&quot;</span>, <span class="dt">size=</span><span class="dv">5</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="function-reduceblank" class="section level2">
+<h2>8. Function: reduceblank</h2>
+<p><code>reduceblank</code> help to reduce blank values from the readings.</p>
+<p>The syntax is <code>reduceblank (dataframe,x_vector,blank_vector,y)</code>. <strong>dataframe</strong> is the data. <strong>x_vector</strong> is the entries for which the blank has to be reduced. If all entries has to reduced use “All”. x_vector should be in a vector format eg: c(“drug1”,“drug2”,drug3&quot; etc). <strong>blank_vector</strong> is the vector of blank names whose value has to be reduced (should be in a vector format eg: c(“blank1”,“blank2”,“blank3”,“blank4”)). This function will reduce the first blank vector element from first x_vector element and so on. <strong>y</strong> is the column name where the action will take place. y should be numeric in nature. The results will appear as a new column named ‘blankminus’.</p>
+<p>For eg.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">data_DF&lt;-<span class="kw">reduceblank</span>(data_DF, <span class="dt">x_vector =</span><span class="kw">c</span>(<span class="st">&quot;All&quot;</span>),<span class="dt">blank_vector =</span> <span class="kw">c</span>(<span class="st">&quot;Blank&quot;</span>), <span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb21-2" title="2"><span class="kw">head</span>(data_DF)</a>
+<a class="sourceLine" id="cb21-3" title="3"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb21-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb21-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb21-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        1             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb21-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        1             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb21-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        1             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb21-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        1             0    Taxol     0.4485</span></a></code></pre></div>
+</div>
+<div id="function-estimate" class="section level2">
+<h2>9. Function: estimate</h2>
+<p><code>estimate</code> help to estimate the unknown variable (eg: concentration) based on the standard curve. Syntax is <code>estimate(data=dataframe,colname=&quot;blankminus&quot;,fitformula=fit, methord=&quot;linear/nplr&quot;)</code>. <strong>data</strong> is the dataframe which need to be evaluated. <strong>colname</strong> is the column name for which the values has to be estimated. <strong>fitformula</strong> is the filling formula used. <strong>methord</strong> is to specify if linear or nonparametric logistic curve was used for the fitformula.</p>
+<p>For eg: data_DF is a dataframe for which the concentration has to be estimated based on the value of blankminus.</p>
+<p>For filtering the ‘standards’</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">std&lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(data_DF, data_DF<span class="op">$</span>id<span class="op">==</span><span class="st">&quot;STD&quot;</span>)  </a>
+<a class="sourceLine" id="cb22-2" title="2">std&lt;-<span class="st"> </span><span class="kw">aggregate</span>(std<span class="op">$</span>blankminus <span class="op">~</span><span class="st"> </span>std<span class="op">$</span>concentration, <span class="dt">FUN =</span> mean )</a>
+<a class="sourceLine" id="cb22-3" title="3"><span class="kw">colnames</span> (std) &lt;-<span class="kw">c</span>(<span class="st">&quot;con&quot;</span>, <span class="st">&quot;OD&quot;</span>)</a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="kw">head</span>(std)</a>
+<a class="sourceLine" id="cb22-5" title="5"><span class="co">#&gt;     con     OD</span></a>
+<a class="sourceLine" id="cb22-6" title="6"><span class="co">#&gt; 1  0.39 0.0155</span></a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="co">#&gt; 2  0.78 0.0345</span></a>
+<a class="sourceLine" id="cb22-8" title="8"><span class="co">#&gt; 3  1.56 0.0710</span></a>
+<a class="sourceLine" id="cb22-9" title="9"><span class="co">#&gt; 4  3.13 0.0935</span></a>
+<a class="sourceLine" id="cb22-10" title="10"><span class="co">#&gt; 5  6.25 0.1675</span></a>
+<a class="sourceLine" id="cb22-11" title="11"><span class="co">#&gt; 6 12.50 0.3440</span></a></code></pre></div>
+<p>To fit a standard curve.</p>
+<p>fit1 is the 3 parameter logistic curve model and fit2 is the linear regression model. The appropriate one for your experiment can be used.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">fit2&lt;-stats<span class="op">::</span><span class="kw">lm</span>(<span class="dt">formula =</span> con <span class="op">~</span><span class="st"> </span>OD,<span class="dt">data =</span> std)<span class="co"># linear model</span></a>
+<a class="sourceLine" id="cb23-2" title="2">fit1&lt;-nplr<span class="op">::</span><span class="kw">nplr</span>(std<span class="op">$</span>con,std<span class="op">$</span>OD,<span class="dt">npars=</span><span class="dv">3</span>,<span class="dt">useLog =</span> <span class="ot">FALSE</span>)<span class="co">#  nplr, 3 parameter model</span></a></code></pre></div>
+<p>For estimating the concentration using linear model</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">estimated&lt;-<span class="kw">estimate</span>(data_DF,<span class="dt">colname=</span><span class="st">&quot;blankminus&quot;</span>,<span class="dt">fitformula=</span>fit2,<span class="dt">method=</span><span class="st">&quot;linear&quot;</span>)</a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="kw">head</span>(estimated)</a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb24-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb24-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb24-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        1             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb24-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        1             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb24-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        1             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb24-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        1             0    Taxol     0.4485</span></a>
+<a class="sourceLine" id="cb24-10" title="10"><span class="co">#&gt;   estimated</span></a>
+<a class="sourceLine" id="cb24-11" title="11"><span class="co">#&gt; 1  23.96838</span></a>
+<a class="sourceLine" id="cb24-12" title="12"><span class="co">#&gt; 2  23.51493</span></a>
+<a class="sourceLine" id="cb24-13" title="13"><span class="co">#&gt; 3  21.20234</span></a>
+<a class="sourceLine" id="cb24-14" title="14"><span class="co">#&gt; 4  21.33838</span></a>
+<a class="sourceLine" id="cb24-15" title="15"><span class="co">#&gt; 5  18.61769</span></a>
+<a class="sourceLine" id="cb24-16" title="16"><span class="co">#&gt; 6  19.16183</span></a></code></pre></div>
+<p>For estimating the concentration using nplr methord</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">estimated2&lt;-<span class="kw">estimate</span>(data_DF,<span class="dt">colname=</span><span class="st">&quot;blankminus&quot;</span>,<span class="dt">fitformula=</span>fit1,<span class="dt">method=</span><span class="st">&quot;nplr&quot;</span>)</a>
+<a class="sourceLine" id="cb25-2" title="2"><span class="kw">head</span>(estimated2)</a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb25-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb25-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        1             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb25-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        1             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb25-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        1             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb25-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        1             0    Taxol     0.4485</span></a>
+<a class="sourceLine" id="cb25-10" title="10"><span class="co">#&gt;   estimated</span></a>
+<a class="sourceLine" id="cb25-11" title="11"><span class="co">#&gt; 1  26.39687</span></a>
+<a class="sourceLine" id="cb25-12" title="12"><span class="co">#&gt; 2  24.01751</span></a>
+<a class="sourceLine" id="cb25-13" title="13"><span class="co">#&gt; 3  18.68524</span></a>
+<a class="sourceLine" id="cb25-14" title="14"><span class="co">#&gt; 4  18.88785</span></a>
+<a class="sourceLine" id="cb25-15" title="15"><span class="co">#&gt; 5  15.70869</span></a>
+<a class="sourceLine" id="cb25-16" title="16"><span class="co">#&gt; 6  16.23867</span></a></code></pre></div>
+</div>
+<div id="function-dfsummary" class="section level2">
+<h2>10. Function: dfsummary</h2>
+<p><code>dfsummary()</code> help to summarize the dataframe (based on a column). It has additional controls to group samples and to omit variables not needed. syntax is <code>dfsummary(dataframe,y,grp_vector,rm_vector,nickname,rm=&quot;FALSE&quot;,param)</code>. <strong>dataframe</strong> is the data. <strong>y</strong> is the numeric variable (column name) that has to be summarized. <strong>grp_vector</strong> is a vector of column names, based on which samples are grouped. The order of elements in grp_vector determines the order of grouping. <strong>rm_vector</strong> is the vector of items need to be omitted before summarizing. <strong>nickname</strong> is the name that has to be given to the output dataframe. <strong>rm=“FALSE”</strong> if outliers has not to be removed. If outliers has to be removed then rm =“TRUE”. For more stringent methord for removing outlier the parameters are provided in a vector <strong>param</strong>. param has to be entered in the format c(strict=“TRUE”,cutoff=40,n=12). For details please refer rmodd_summary function.</p>
+<p>For eg. data has to be summarized based on the “type” column. “estimated” values are summarized. samples are grouped as per “id”. “STD” and “Blank” values need to be omitted. outliers are not omitted (rm=“FALSE”). nickname for the plate is “plate1”.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">result&lt;-<span class="kw">dfsummary</span>(estimated,<span class="st">&quot;estimated&quot;</span>,<span class="kw">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;type&quot;</span>),</a>
+<a class="sourceLine" id="cb26-2" title="2">        <span class="kw">c</span>(<span class="st">&quot;STD&quot;</span>,<span class="st">&quot;Blank&quot;</span>),<span class="st">&quot;plate1&quot;</span>, <span class="dt">rm=</span><span class="st">&quot;FALSE&quot;</span>,</a>
+<a class="sourceLine" id="cb26-3" title="3">        <span class="dt">param=</span><span class="kw">c</span>(<span class="dt">strict=</span><span class="st">&quot;FALSE&quot;</span>,<span class="dt">cutoff=</span><span class="dv">40</span>,<span class="dt">n=</span><span class="dv">12</span>))</a>
+<a class="sourceLine" id="cb26-4" title="4"><span class="co">#&gt; F1</span></a>
+<a class="sourceLine" id="cb26-5" title="5"><span class="co">#&gt; F2</span></a>
+<a class="sourceLine" id="cb26-6" title="6"></a>
+<a class="sourceLine" id="cb26-7" title="7">result</a>
+<a class="sourceLine" id="cb26-8" title="8"><span class="co">#&gt;       id type  label  N   Mean    SD    CV</span></a>
+<a class="sourceLine" id="cb26-9" title="9"><span class="co">#&gt; 1 Sample   S1 plate1 10 19.561 1.465  7.49</span></a>
+<a class="sourceLine" id="cb26-10" title="10"><span class="co">#&gt; 2 Sample   S2 plate1 10 18.536 1.141  6.15</span></a>
+<a class="sourceLine" id="cb26-11" title="11"><span class="co">#&gt; 3 Sample   S3 plate1 10 15.670 2.194 14.00</span></a>
+<a class="sourceLine" id="cb26-12" title="12"><span class="co">#&gt; 4 Sample   S4 plate1 10 13.362 1.026  7.68</span></a>
+<a class="sourceLine" id="cb26-13" title="13"><span class="co">#&gt; 5 Sample   S5 plate1 10 12.043 1.359 11.29</span></a>
+<a class="sourceLine" id="cb26-14" title="14"><span class="co">#&gt; 6 Sample   S6 plate1 10  6.969 1.066 15.30</span></a>
+<a class="sourceLine" id="cb26-15" title="15"><span class="co">#&gt; 7 Sample   S7 plate1 10  6.370 0.819 12.85</span></a>
+<a class="sourceLine" id="cb26-16" title="16"><span class="co">#&gt; 8 Sample   S8 plate1 10  7.612 1.174 15.42</span></a></code></pre></div>
+</div>
+<div id="function-pvalue" class="section level2">
+<h2>11. Function: pvalue</h2>
+<p><code>pvalue()</code> help to calculate the significance by t-test on the result dataframe. Syntax is <code>pvalue(dataframe,control,sigval)</code>. <strong>dataframe</strong> is the result of dfsummary. <strong>control</strong> is the group that is considered as control, <strong>sigval</strong> is the pvalue cutoff (a value below this is considered as significant). For eg.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">pval&lt;-<span class="kw">pvalue</span>(result, <span class="dt">control=</span><span class="st">&quot;S8&quot;</span>, <span class="dt">sigval=</span><span class="fl">0.05</span>)</a>
+<a class="sourceLine" id="cb27-2" title="2"><span class="kw">head</span>(pval)</a>
+<a class="sourceLine" id="cb27-3" title="3"><span class="co">#&gt;       id type  label  N   Mean    SD    CV   pvalue significance</span></a>
+<a class="sourceLine" id="cb27-4" title="4"><span class="co">#&gt; 1 Sample   S8 plate1 10  7.612 1.174 15.42 control              </span></a>
+<a class="sourceLine" id="cb27-5" title="5"><span class="co">#&gt; 2 Sample   S1 plate1 10 19.561 1.465  7.49  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb27-6" title="6"><span class="co">#&gt; 3 Sample   S2 plate1 10 18.536 1.141  6.15  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb27-7" title="7"><span class="co">#&gt; 4 Sample   S3 plate1 10 15.670 2.194 14.00  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb27-8" title="8"><span class="co">#&gt; 5 Sample   S4 plate1 10 13.362 1.026  7.68  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb27-9" title="9"><span class="co">#&gt; 6 Sample   S5 plate1 10 12.043 1.359 11.29  &lt; 0.001          Yes</span></a></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

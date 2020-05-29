@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Anwar Azad Palakkan, Jamie Davies" />
+
+
+<title>Cellular assays using ‘bioassays’ package in R</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Cellular assays using ‘bioassays’ package in R</h1>
+<h4 class="author">Anwar Azad Palakkan, Jamie Davies</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(bioassays)</a></code></pre></div>
+<div id="libraries" class="section level1">
+<h1>Libraries</h1>
+<p>Following libraries will be useful. If the libraries are not installed, please install them using <strong>install.packages()</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(tcltk)<span class="co"># for selecting the folder for analysis</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="kw">library</span>(ggplot2)<span class="co"># for plotting graphs</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw">library</span>(reshape2)</a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="kw">library</span>(nplr)<span class="co"># for the standard curve fitting</span></a></code></pre></div>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In a cell culture lab various cellular assays are performed. The package “bioassays” will help to analyse the results of these experiments performed in multiwell plates. The functions in this package can be used to summarise data from any multiwell plate, and by incorporating them in a loop several plates can be analyzed automatically. Two examples are shown in this article.</p>
+</div>
+<div id="example-1-analysing-result-from-a-96-well-plate" class="section level1">
+<h1>Example 1: Analysing result from a 96 well plate</h1>
+<div id="input-data" class="section level2">
+<h2>Input data</h2>
+<p>To set up a folder as working directory</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">path1&lt;-<span class="kw">tk_choose.dir</span>(<span class="kw">getwd</span>(), <span class="st">&quot;Choose the folder for Analysis&quot;</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="co"># A window will popup and ask you to select the folder containg the data  </span></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">setwd</span>(path1)</a></code></pre></div>
+<p>Read files</p>
+<p>Files can be read using the codes below. Files need to be in .csv format. In this examples file names reflect the type of assay used. For example <em>“L DIFF P3 72HRS.csv”</em> :<em>L</em> is assay code (Lactate assay), <em>DIFF</em> differentiation (type of cells used), <em>p3</em>: Plate 3 (each plate represent specific compounds tested), <em>72HRS</em> 72hrs treatment with compound. These information will help to summarise the results.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">filelist &lt;-<span class="kw">list</span>(<span class="st">&quot;L HEPG2 P3 72HRS.csv&quot;</span>,<span class="st">&quot;L HEPG2 P3 24HRS.csv&quot;</span>) <span class="co"># list of files</span></a>
+<a class="sourceLine" id="cb4-2" title="2">fno&lt;-<span class="dv">1</span> <span class="co"># file number (in fileslist) that is going to be analyzed</span></a>
+<a class="sourceLine" id="cb4-3" title="3">result &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">stringsAsFactors=</span> <span class="ot">FALSE</span>) <span class="co">## An empty dataframe to dump result</span></a>
+<a class="sourceLine" id="cb4-4" title="4">zzz &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">stringsAsFactors=</span> <span class="ot">FALSE</span>) <span class="co">## An empty dataframe to dump result</span></a></code></pre></div>
+<p>To read 1st file</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">filename&lt;-<span class="kw">extract_filename</span>(filelist[fno])[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb5-2" title="2">filename</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; [1] &quot;L HEPG2 P3 72HRS.csv&quot;</span></a>
+<a class="sourceLine" id="cb5-4" title="4">nickname&lt;-<span class="kw">extract_filename</span>(filelist[fno], <span class="dt">split=</span><span class="st">&quot; &quot;</span>,<span class="dt">end=</span><span class="st">&quot;.csv&quot;</span>,<span class="dt">remove=</span><span class="st">&quot;&quot;</span>,<span class="dt">sep=</span><span class="st">&quot;&quot;</span>)[<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb5-5" title="5">nickname</a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; [1] &quot;LHEPG2P372HRS&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">rawdata&lt;-<span class="kw">read.csv</span>(filename,<span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>, <span class="dt">strip.white =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb6-2" title="2">                  <span class="dt">na.strings =</span> <span class="kw">c</span>(<span class="st">&quot;NA&quot;</span>,<span class="st">&quot;&quot;</span>),<span class="dt">header =</span> <span class="ot">TRUE</span>,<span class="dt">skip=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="kw">head</span>(rawdata)</a></code></pre></div>
+<pre><code>#&gt;   X    X1    X2    X3    X4    X5    X6    X7    X8    X9   X10   X11   X12
+#&gt; 1 A 0.659 0.649 0.598 0.601 0.541 0.553 0.568 0.519 0.576 0.575 0.583 0.504
+#&gt; 2 B 0.442 0.455 0.586 0.563 0.525 0.548 0.511 0.503 0.533 0.559 0.529 0.535
+#&gt; 3 C 0.278 0.266 0.491 0.562 0.510 0.473 0.467 0.433 0.382 0.457 0.475 0.510
+#&gt; 4 D 0.197 0.199 0.452 0.456 0.421 0.431 0.409 0.401 0.458 0.412 0.408 0.403
+#&gt; 5 E 0.177 0.174 0.447 0.437 0.392 0.412 0.368 0.396 0.397 0.358 0.360 0.393
+#&gt; 6 F 0.141 0.137 0.277 0.337 0.294 0.279 0.257 0.263 0.262 0.292 0.280 0.300</code></pre>
+<p>Reading metadata file</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">metadata&lt;-<span class="kw">read.csv</span>(<span class="st">&quot;metafile.csv&quot;</span>,<span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>,<span class="dt">strip.white =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb8-2" title="2">                  <span class="dt">na.strings =</span> <span class="kw">c</span>(<span class="st">&quot;NA&quot;</span>,<span class="st">&quot;&quot;</span>),<span class="dt">header =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="kw">head</span>(metadata)</a></code></pre></div>
+<pre><code>#&gt;   row col position type     id concentration dilution
+#&gt; 1   A   1      A01 STD1    STD            25       NA
+#&gt; 2   A   2      A02 STD1    STD            25       NA
+#&gt; 3   A   3      A03   S1 Sample            NA       NA
+#&gt; 4   A   4      A04   S1 Sample            NA       NA
+#&gt; 5   A   5      A05   S1 Sample            NA       NA
+#&gt; 6   A   6      A06   S1 Sample            NA       NA</code></pre>
+</div>
+<div id="rearranging-the-data" class="section level2">
+<h2>Rearranging the data</h2>
+<p>96 well plates were used for the assay, so it is assumed that in data the rows being from A to G and columns 1 to 12 of a 96 well plate. data2plateformat function is used to label them correctly.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">rawdata&lt;-<span class="kw">data2plateformat</span>(rawdata,<span class="dt">platetype =</span> <span class="dv">96</span>)</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="kw">head</span>(rawdata)</a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt;       1     2     3     4     5     6     7     8     9    10    11    12</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="co">#&gt; A 0.659 0.649 0.598 0.601 0.541 0.553 0.568 0.519 0.576 0.575 0.583 0.504</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="co">#&gt; B 0.442 0.455 0.586 0.563 0.525 0.548 0.511 0.503 0.533 0.559 0.529 0.535</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="co">#&gt; C 0.278 0.266 0.491 0.562 0.510 0.473 0.467 0.433 0.382 0.457 0.475 0.510</span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="co">#&gt; D 0.197 0.199 0.452 0.456 0.421 0.431 0.409 0.401 0.458 0.412 0.408 0.403</span></a>
+<a class="sourceLine" id="cb10-8" title="8"><span class="co">#&gt; E 0.177 0.174 0.447 0.437 0.392 0.412 0.368 0.396 0.397 0.358 0.360 0.393</span></a>
+<a class="sourceLine" id="cb10-9" title="9"><span class="co">#&gt; F 0.141 0.137 0.277 0.337 0.294 0.279 0.257 0.263 0.262 0.292 0.280 0.300</span></a></code></pre></div>
+</div>
+<div id="to-convert-data-into-a-dataframe." class="section level2">
+<h2>To convert data into a dataframe.</h2>
+<p>data2plateformat function uses the column name and row name of the above rawdata to format it as a data frame. So the data should be well formatted before using this function.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">OD_df&lt;-<span class="st"> </span><span class="kw">plate2df</span>(rawdata)</a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="kw">head</span>(OD_df)</a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="co">#&gt;   row col position value</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649</span></a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601</span></a>
+<a class="sourceLine" id="cb11-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541</span></a>
+<a class="sourceLine" id="cb11-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553</span></a></code></pre></div>
+</div>
+<div id="for-an-overview-of-the-plate" class="section level2">
+<h2>For an overview of the plate</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">data&lt;-<span class="kw">matrix96</span>(OD_df,<span class="st">&quot;value&quot;</span>,<span class="dt">rm=</span><span class="st">&quot;TRUE&quot;</span>)</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="kw">heatplate</span>(data,<span class="st">&quot;Plate 1&quot;</span>, <span class="dt">size=</span><span class="dv">5</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="filling-metadata-file-using-plate-specific-details" class="section level2">
+<h2>Filling metadata file using plate specific details</h2>
+<p>An example function is given below which will determine the compound,concentration, type and dilution from the file name</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">plate_info&lt;-<span class="cf">function</span>(file,i){</a>
+<a class="sourceLine" id="cb13-2" title="2">  </a>
+<a class="sourceLine" id="cb13-3" title="3">  file&lt;-file[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb13-4" title="4">  plate&lt;-<span class="st"> </span><span class="kw">extract_filename</span>(file,<span class="dt">split =</span> <span class="st">&quot; &quot;</span>,<span class="dt">end =</span> <span class="st">&quot;.csv&quot;</span>, <span class="dt">remove =</span> <span class="st">&quot; &quot;</span>, <span class="dt">sep=</span><span class="st">&quot; &quot;</span>)[<span class="dv">5</span>]</a>
+<a class="sourceLine" id="cb13-5" title="5"></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="cf">if</span>(plate <span class="op">==</span><span class="st"> &quot;P2&quot;</span>){</a>
+<a class="sourceLine" id="cb13-7" title="7">  compound&lt;-<span class="st">&quot;CyclosporinA&quot;</span>   <span class="co"># Concentration of cyclosporinA used for experiment</span></a>
+<a class="sourceLine" id="cb13-8" title="8">  concentration&lt;-<span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">15</span>,<span class="dv">20</span>,<span class="dv">25</span>,<span class="dv">50</span>) <span class="co"># Concentration of cyclosporinA used for experiment</span></a>
+<a class="sourceLine" id="cb13-9" title="9">  type&lt;-<span class="kw">c</span>(<span class="st">&quot;S1&quot;</span>,<span class="st">&quot;S2&quot;</span>,<span class="st">&quot;S3&quot;</span>,<span class="st">&quot;S4&quot;</span>,<span class="st">&quot;S5&quot;</span>,<span class="st">&quot;S6&quot;</span>,<span class="st">&quot;S7&quot;</span>,<span class="st">&quot;S8&quot;</span>) <span class="co"># sample names of corresponding concentration</span></a>
+<a class="sourceLine" id="cb13-10" title="10">  dilution&lt;-<span class="dv">5</span></a>
+<a class="sourceLine" id="cb13-11" title="11">  plate_meta&lt;-<span class="kw">list</span>(<span class="dt">compound=</span>compound,<span class="dt">concentration=</span><span class="kw">round</span>(concentration,<span class="dv">2</span>),<span class="dt">type=</span>type,</a>
+<a class="sourceLine" id="cb13-12" title="12">                   <span class="dt">dilution=</span>dilution)</a>
+<a class="sourceLine" id="cb13-13" title="13">}</a>
+<a class="sourceLine" id="cb13-14" title="14"></a>
+<a class="sourceLine" id="cb13-15" title="15"></a>
+<a class="sourceLine" id="cb13-16" title="16"><span class="cf">if</span>(plate <span class="op">==</span><span class="st"> &quot;P3&quot;</span>){</a>
+<a class="sourceLine" id="cb13-17" title="17">  compound&lt;-<span class="st">&quot;Taxol&quot;</span></a>
+<a class="sourceLine" id="cb13-18" title="18">  concentration&lt;-<span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.0125</span>,.<span class="dv">025</span>,.<span class="dv">05</span>,<span class="fl">0.1</span>,<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">10</span>) </a>
+<a class="sourceLine" id="cb13-19" title="19">  type&lt;-<span class="kw">c</span>(<span class="st">&quot;S1&quot;</span>,<span class="st">&quot;S2&quot;</span>,<span class="st">&quot;S3&quot;</span>,<span class="st">&quot;S4&quot;</span>,<span class="st">&quot;S5&quot;</span>,<span class="st">&quot;S6&quot;</span>,<span class="st">&quot;S7&quot;</span>,<span class="st">&quot;S8&quot;</span>)</a>
+<a class="sourceLine" id="cb13-20" title="20">  dilution&lt;-<span class="dv">5</span></a>
+<a class="sourceLine" id="cb13-21" title="21">  plate_meta&lt;-<span class="kw">list</span>(<span class="dt">compound=</span>compound,<span class="dt">concentration=</span><span class="kw">round</span>(concentration,<span class="dv">2</span>),<span class="dt">type=</span>type,</a>
+<a class="sourceLine" id="cb13-22" title="22">                   <span class="dt">dilution=</span>dilution)</a>
+<a class="sourceLine" id="cb13-23" title="23">}</a>
+<a class="sourceLine" id="cb13-24" title="24"></a>
+<a class="sourceLine" id="cb13-25" title="25"></a>
+<a class="sourceLine" id="cb13-26" title="26"><span class="cf">if</span>(plate <span class="op">==</span><span class="st">&quot;p4&quot;</span>){</a>
+<a class="sourceLine" id="cb13-27" title="27">  compound&lt;-<span class="kw">c</span>(<span class="st">&quot;Cisplatin&quot;</span>)</a>
+<a class="sourceLine" id="cb13-28" title="28">  concentration&lt;-<span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">0.5</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">16</span>,<span class="dv">64</span>,<span class="st">&quot;&quot;</span>) </a>
+<a class="sourceLine" id="cb13-29" title="29">  type&lt;-<span class="kw">c</span>(<span class="st">&quot;S1&quot;</span>,<span class="st">&quot;S2&quot;</span>,<span class="st">&quot;S3&quot;</span>,<span class="st">&quot;S4&quot;</span>,<span class="st">&quot;S5&quot;</span>,<span class="st">&quot;S6&quot;</span>,<span class="st">&quot;S7&quot;</span>,<span class="st">&quot;&quot;</span>) </a>
+<a class="sourceLine" id="cb13-30" title="30">  dilution &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb13-31" title="31">  plate_meta&lt;-<span class="kw">list</span>(<span class="dt">compound=</span>compound,<span class="dt">concentration=</span><span class="kw">round</span>(concentration,<span class="dv">2</span>),<span class="dt">type=</span>type,</a>
+<a class="sourceLine" id="cb13-32" title="32">                   <span class="dt">dilution=</span>dilution)</a>
+<a class="sourceLine" id="cb13-33" title="33">}</a>
+<a class="sourceLine" id="cb13-34" title="34">  <span class="kw">return</span>(plate_meta)</a>
+<a class="sourceLine" id="cb13-35" title="35">}</a>
+<a class="sourceLine" id="cb13-36" title="36"></a>
+<a class="sourceLine" id="cb13-37" title="37">plate_details&lt;-<span class="kw">plate_info</span>(filelist,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb13-38" title="38">plate_details</a>
+<a class="sourceLine" id="cb13-39" title="39"><span class="co">#&gt; $compound</span></a>
+<a class="sourceLine" id="cb13-40" title="40"><span class="co">#&gt; [1] &quot;Taxol&quot;</span></a>
+<a class="sourceLine" id="cb13-41" title="41"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-42" title="42"><span class="co">#&gt; $concentration</span></a>
+<a class="sourceLine" id="cb13-43" title="43"><span class="co">#&gt; [1]  0.00  0.01  0.03  0.05  0.10  1.00  5.00 10.00</span></a>
+<a class="sourceLine" id="cb13-44" title="44"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-45" title="45"><span class="co">#&gt; $type</span></a>
+<a class="sourceLine" id="cb13-46" title="46"><span class="co">#&gt; [1] &quot;S1&quot; &quot;S2&quot; &quot;S3&quot; &quot;S4&quot; &quot;S5&quot; &quot;S6&quot; &quot;S7&quot; &quot;S8&quot;</span></a>
+<a class="sourceLine" id="cb13-47" title="47"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-48" title="48"><span class="co">#&gt; $dilution</span></a>
+<a class="sourceLine" id="cb13-49" title="49"><span class="co">#&gt; [1] 5</span></a></code></pre></div>
+<p>These ‘plate details’ can be used to fill metadata using plate_metadata function</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">metadata1&lt;-<span class="kw">plate_metadata</span>(plate_details,metadata,<span class="dt">mergeby=</span><span class="st">&quot;type&quot;</span>)</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="kw">head</span>(metadata1)</a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt;   row col type position     id dilution concentration compound</span></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="co">#&gt; 1   A   1 STD1      A01    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="co">#&gt; 2   A   2 STD1      A02    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="co">#&gt; 3   A   3   S1      A03 Sample        5             0    Taxol</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="co">#&gt; 4   A   4   S1      A04 Sample        5             0    Taxol</span></a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="co">#&gt; 5   A   5   S1      A05 Sample        5             0    Taxol</span></a>
+<a class="sourceLine" id="cb14-9" title="9"><span class="co">#&gt; 6   A   6   S1      A06 Sample        5             0    Taxol</span></a></code></pre></div>
+<p>For joining metadata and platelayout ‘inner_join’ function is used</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">data_DF&lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(OD_df,metadata1,<span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;row&quot;</span>,<span class="st">&quot;col&quot;</span>,<span class="st">&quot;position&quot;</span>))</a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="kw">assign</span>(<span class="kw">paste</span>(<span class="st">&quot;data&quot;</span>,<span class="dt">sep=</span><span class="st">&quot;_&quot;</span>,nickname),data_DF) <span class="co"># create a copy of data with platename</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="kw">head</span>(data_DF)</a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="co">#&gt;   row col position value type     id dilution concentration compound</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;</span></a>
+<a class="sourceLine" id="cb15-7" title="7"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        5             0    Taxol</span></a>
+<a class="sourceLine" id="cb15-8" title="8"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        5             0    Taxol</span></a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        5             0    Taxol</span></a>
+<a class="sourceLine" id="cb15-10" title="10"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        5             0    Taxol</span></a></code></pre></div>
+</div>
+<div id="sorting-blank-wells-and-reducing-blanks" class="section level2">
+<h2>Sorting blank wells and reducing blanks</h2>
+<p>Blank can be reduced using ‘reduceblank’ function</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">data_DF&lt;-<span class="kw">reduceblank</span>(data_DF, <span class="dt">x_vector =</span><span class="kw">c</span>(<span class="st">&quot;All&quot;</span>),<span class="dt">blank_vector =</span> <span class="kw">c</span>(<span class="st">&quot;Blank&quot;</span>), <span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">head</span>(data_DF)</a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb16-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb16-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        5             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb16-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        5             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb16-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        5             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb16-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        5             0    Taxol     0.4485</span></a>
+<a class="sourceLine" id="cb16-10" title="10"><span class="kw">assign</span>(<span class="kw">paste</span>(<span class="st">&quot;Blkmin&quot;</span>,<span class="dt">sep=</span><span class="st">&quot;_&quot;</span>,nickname),data_DF) <span class="co"># create a copy of data with platename</span></a></code></pre></div>
+</div>
+<div id="plotting-standard-curve" class="section level2">
+<h2>Plotting standard curve</h2>
+<p>To filter standards</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">std&lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(data_DF, data_DF<span class="op">$</span>id<span class="op">==</span><span class="st">&quot;STD&quot;</span>)  </a>
+<a class="sourceLine" id="cb17-2" title="2">std&lt;-<span class="st"> </span><span class="kw">aggregate</span>(std<span class="op">$</span>blankminus <span class="op">~</span><span class="st"> </span>std<span class="op">$</span>concentration, <span class="dt">FUN =</span> mean )</a>
+<a class="sourceLine" id="cb17-3" title="3"><span class="kw">colnames</span> (std) &lt;-<span class="kw">c</span>(<span class="st">&quot;con&quot;</span>, <span class="st">&quot;OD&quot;</span>)</a>
+<a class="sourceLine" id="cb17-4" title="4"><span class="kw">head</span>(std)</a>
+<a class="sourceLine" id="cb17-5" title="5"><span class="co">#&gt;     con     OD</span></a>
+<a class="sourceLine" id="cb17-6" title="6"><span class="co">#&gt; 1  0.39 0.0155</span></a>
+<a class="sourceLine" id="cb17-7" title="7"><span class="co">#&gt; 2  0.78 0.0345</span></a>
+<a class="sourceLine" id="cb17-8" title="8"><span class="co">#&gt; 3  1.56 0.0710</span></a>
+<a class="sourceLine" id="cb17-9" title="9"><span class="co">#&gt; 4  3.13 0.0935</span></a>
+<a class="sourceLine" id="cb17-10" title="10"><span class="co">#&gt; 5  6.25 0.1675</span></a>
+<a class="sourceLine" id="cb17-11" title="11"><span class="co">#&gt; 6 12.50 0.3440</span></a></code></pre></div>
+<p>Calculations for standard curve : nonparametric logistic regression curve</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"></a>
+<a class="sourceLine" id="cb18-2" title="2">fit1&lt;-nplr<span class="op">::</span><span class="kw">nplr</span>(std<span class="op">$</span>con,std<span class="op">$</span>OD,<span class="dt">npars=</span><span class="dv">3</span>,<span class="dt">useLog =</span> <span class="ot">FALSE</span>) </a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="co">#npars = 3 for 3 parametric regression curve</span></a>
+<a class="sourceLine" id="cb18-4" title="4"></a>
+<a class="sourceLine" id="cb18-5" title="5"><span class="co">#for graph</span></a>
+<a class="sourceLine" id="cb18-6" title="6">x1 &lt;-<span class="st"> </span>nplr<span class="op">::</span><span class="kw">getX</span>(fit1); y1 &lt;-<span class="st"> </span>nplr<span class="op">::</span><span class="kw">getY</span>(fit1)</a>
+<a class="sourceLine" id="cb18-7" title="7">x2 &lt;-<span class="st"> </span>nplr<span class="op">::</span><span class="kw">getXcurve</span>(fit1); y2 &lt;-<span class="st"> </span>nplr<span class="op">::</span><span class="kw">getYcurve</span>(fit1)</a>
+<a class="sourceLine" id="cb18-8" title="8"><span class="kw">plot</span>(x1, y1, <span class="dt">pch=</span><span class="dv">15</span>, <span class="dt">cex=</span><span class="dv">1</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Concentration&quot;</span>,</a>
+<a class="sourceLine" id="cb18-9" title="9">     <span class="dt">ylab=</span><span class="st">&quot;Mean OD&quot;</span>, <span class="dt">main=</span><span class="kw">paste</span>(<span class="st">&quot;Standard Curve: &quot;</span>, nickname), <span class="dt">cex.main=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb18-10" title="10"><span class="kw">lines</span>(x2, y2, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">col=</span><span class="st">&quot;seagreen4&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>To evaluate nonparametric logistic regression fitting</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">params&lt;-nplr<span class="op">::</span><span class="kw">getPar</span>(fit1)<span class="op">$</span>params</a>
+<a class="sourceLine" id="cb19-2" title="2">nplr<span class="op">::</span><span class="kw">getGoodness</span>(fit1)</a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="co">#&gt; $gof</span></a>
+<a class="sourceLine" id="cb19-4" title="4"><span class="co">#&gt; [1] 0.9919475</span></a>
+<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; $wgof</span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt; [1] 0.9995859</span></a></code></pre></div>
+<p>To estimate the values based on logistic regression fitting</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">estimated_nplr&lt;-<span class="kw">estimate</span>(data_DF,<span class="dt">colname=</span><span class="st">&quot;blankminus&quot;</span>,<span class="dt">fitformula=</span>fit1,<span class="dt">method=</span><span class="st">&quot;nplr&quot;</span>)</a>
+<a class="sourceLine" id="cb20-2" title="2"><span class="co">#&gt; These values have been replaced by the minimal possible value the model can estimate.</span></a>
+<a class="sourceLine" id="cb20-3" title="3"><span class="kw">head</span>(estimated_nplr)</a>
+<a class="sourceLine" id="cb20-4" title="4"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb20-5" title="5"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb20-6" title="6"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb20-7" title="7"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        5             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb20-8" title="8"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        5             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb20-9" title="9"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        5             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb20-10" title="10"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        5             0    Taxol     0.4485</span></a>
+<a class="sourceLine" id="cb20-11" title="11"><span class="co">#&gt;   estimated</span></a>
+<a class="sourceLine" id="cb20-12" title="12"><span class="co">#&gt; 1  26.39687</span></a>
+<a class="sourceLine" id="cb20-13" title="13"><span class="co">#&gt; 2  24.01751</span></a>
+<a class="sourceLine" id="cb20-14" title="14"><span class="co">#&gt; 3  18.68524</span></a>
+<a class="sourceLine" id="cb20-15" title="15"><span class="co">#&gt; 4  18.88785</span></a>
+<a class="sourceLine" id="cb20-16" title="16"><span class="co">#&gt; 5  15.70869</span></a>
+<a class="sourceLine" id="cb20-17" title="17"><span class="co">#&gt; 6  16.23867</span></a></code></pre></div>
+<p>Calculations for standard curve : linear regression curve</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"></a>
+<a class="sourceLine" id="cb21-2" title="2">fit2&lt;-stats<span class="op">::</span><span class="kw">lm</span>(<span class="dt">formula =</span> con <span class="op">~</span><span class="st"> </span>OD,<span class="dt">data =</span> std)</a>
+<a class="sourceLine" id="cb21-3" title="3">ggplot2<span class="op">::</span><span class="kw">ggplot</span>(std, ggplot2<span class="op">::</span><span class="kw">aes</span>(<span class="dt">x=</span>OD,<span class="dt">y=</span>con))<span class="op">+</span></a>
+<a class="sourceLine" id="cb21-4" title="4">ggplot2<span class="op">::</span><span class="kw">ggtitle</span>(<span class="kw">paste</span>(<span class="st">&quot;Std Curve:&quot;</span>, nickname))<span class="op">+</span></a>
+<a class="sourceLine" id="cb21-5" title="5">ggplot2<span class="op">::</span><span class="kw">geom_point</span>(<span class="dt">color=</span><span class="st">&quot;red&quot;</span>,<span class="dt">size=</span><span class="dv">2</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb21-6" title="6">ggplot2<span class="op">::</span><span class="kw">geom_line</span>(<span class="dt">data =</span> ggplot2<span class="op">::</span><span class="kw">fortify</span>(fit2),ggplot2<span class="op">::</span><span class="kw">aes</span>(<span class="dt">x=</span>OD,<span class="dt">y=</span>.fitted),</a>
+<a class="sourceLine" id="cb21-7" title="7">          <span class="dt">colour=</span><span class="st">&quot;seagreen4&quot;</span>,<span class="dt">size=</span><span class="dv">1</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb21-8" title="8">ggplot2<span class="op">::</span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAxlBMVEUAAAAAAFQAAIAAVFQAVIAAVKYAgMYui1czMzNNTU1OTnZOTpdOdrVOl89UAABUAFRUAIBUVABUpuN2Tk52TnZ2Tpd2dpd2drV2teiAAACAAFSAVACAgICAxv+XTk6XTnaXTpeXdk6Xz/+mVACm4/+1dk61dna1dpe1z7W16Oi16P/GgADG/8bG/+PG///Pl07P///jplTjxoDj/+Pj///otXbo///r6+v/AAD/xoD/z5f/46b/6LX//8b//8///+P//+j///9gV0M6AAAACXBIWXMAAA7DAAAOwwHHb6hkAAALyklEQVR4nO2dC3vbthWGlbSWq67NWnVtrW1JuzjttqhNqi0XKbYs8///qeJ+IUHikASJQ/J8z5OElj6CwCvwAAJP4FVBatQqdwWwiwBFRIAiIkAREaCICFBEBCgiAhRRe0D7FdOWH91980a9drldlwzPW5d7ePqmdHTescscVkprc/zklfSd+A/Ke/dMXdTzcMfVO/WuetU6Q5dRr9lGtgV03smC+GVtkxxAui7rmgJqBQck26drItpxMoeu56Db7ABynMHL8BfdRrYFdJBc9+4VXECs7LX8p20fqgNkXjbHJ17zy62oP2s7a/XllveNE2+d4znvuGNvanJila46/cvIhjmNbAtoLws679ashuKDYB/J098NIFU2q/fVu8stryCHx/4cVk++FeeyU+VnJH46merDAYlKnHQfvXu2Zn+2+nXXo96XNSoEr4DTu4z4wTaycw8qeMMFINE3P//HWr/otMcF9Nmz1dX/BAyO5GQiQmdAe+d1rT27XgXQXocsc1By1vYgoW4xaGvqe96JHq4/TgFdywXET5FvspqzH5/Lj96RA0jHAzem8NaZ22ftX8jUbet5RBVMSHcv54edVTgGbTsBUgHeBGnZZc3FawGJakuiW93PD14ngACyx+pCB12XQgdC1y+bqgg5Hch3epdZlxvZaR7EB4W1bJK8RUyQrgWkAiq7u+xIsnL6POwWcz/kMqDL7bbk0VUS7zs1087KZU6atdPIjhNF0SUCgGwMOjx5VQHED/nd3xmQPbYXcuCXPPoscRkb7MpO5zIeIXmNloDMvaSHAXm32I9Hx7fzTgdS/p5qBDvjN14bXUW/Ha0A2VFMln3S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" /><!-- --></p>
+<p>To evaluate linear fitting</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">conpred&lt;-<span class="kw">estimate</span>(std,<span class="dt">colname=</span><span class="st">&quot;OD&quot;</span>,<span class="dt">fitformula=</span>fit2,<span class="dt">method=</span><span class="st">&quot;linear&quot;</span>)</a>
+<a class="sourceLine" id="cb22-2" title="2">compare&lt;-conpred[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]</a>
+<a class="sourceLine" id="cb22-3" title="3">corAccuracy&lt;-<span class="kw">cor</span>(compare)[<span class="dv">1</span>,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb22-4" title="4">corAccuracy <span class="co">## Correlation accuracy of regression line</span></a>
+<a class="sourceLine" id="cb22-5" title="5"><span class="co">#&gt; [1] 0.9932859</span></a>
+<a class="sourceLine" id="cb22-6" title="6"><span class="kw">summary</span>(fit2)</a>
+<a class="sourceLine" id="cb22-7" title="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb22-8" title="8"><span class="co">#&gt; Call:</span></a>
+<a class="sourceLine" id="cb22-9" title="9"><span class="co">#&gt; stats::lm(formula = con ~ OD, data = std)</span></a>
+<a class="sourceLine" id="cb22-10" title="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb22-11" title="11"><span class="co">#&gt; Residuals:</span></a>
+<a class="sourceLine" id="cb22-12" title="12"><span class="co">#&gt;        1        2        3        4        5        6        7 </span></a>
+<a class="sourceLine" id="cb22-13" title="13"><span class="co">#&gt;  0.86249  0.39094 -0.48415  0.06559 -0.16993 -1.92329  1.25834 </span></a>
+<a class="sourceLine" id="cb22-14" title="14"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb22-15" title="15"><span class="co">#&gt; Coefficients:</span></a>
+<a class="sourceLine" id="cb22-16" title="16"><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></a>
+<a class="sourceLine" id="cb22-17" title="17"><span class="co">#&gt; (Intercept)  -1.1753     0.6078  -1.934    0.111    </span></a>
+<a class="sourceLine" id="cb22-18" title="18"><span class="co">#&gt; OD           45.3448     2.3618  19.199 7.07e-06 ***</span></a>
+<a class="sourceLine" id="cb22-19" title="19"><span class="co">#&gt; ---</span></a>
+<a class="sourceLine" id="cb22-20" title="20"><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></a>
+<a class="sourceLine" id="cb22-21" title="21"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb22-22" title="22"><span class="co">#&gt; Residual standard error: 1.135 on 5 degrees of freedom</span></a>
+<a class="sourceLine" id="cb22-23" title="23"><span class="co">#&gt; Multiple R-squared:  0.9866, Adjusted R-squared:  0.9839 </span></a>
+<a class="sourceLine" id="cb22-24" title="24"><span class="co">#&gt; F-statistic: 368.6 on 1 and 5 DF,  p-value: 7.069e-06</span></a></code></pre></div>
+<p>To estimate the values based on linear curve</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">estimated_lr&lt;-<span class="kw">estimate</span>(data_DF,<span class="dt">colname=</span><span class="st">&quot;blankminus&quot;</span>,<span class="dt">fitformula=</span>fit2,<span class="dt">method=</span><span class="st">&quot;linear&quot;</span>)</a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="kw">head</span>(estimated_lr)</a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb23-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb23-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb23-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        5             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb23-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        5             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb23-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        5             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb23-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        5             0    Taxol     0.4485</span></a>
+<a class="sourceLine" id="cb23-10" title="10"><span class="co">#&gt;   estimated</span></a>
+<a class="sourceLine" id="cb23-11" title="11"><span class="co">#&gt; 1  23.96838</span></a>
+<a class="sourceLine" id="cb23-12" title="12"><span class="co">#&gt; 2  23.51493</span></a>
+<a class="sourceLine" id="cb23-13" title="13"><span class="co">#&gt; 3  21.20234</span></a>
+<a class="sourceLine" id="cb23-14" title="14"><span class="co">#&gt; 4  21.33838</span></a>
+<a class="sourceLine" id="cb23-15" title="15"><span class="co">#&gt; 5  18.61769</span></a>
+<a class="sourceLine" id="cb23-16" title="16"><span class="co">#&gt; 6  19.16183</span></a></code></pre></div>
+<p>For multiply estimated by dilution</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">estimated_lr<span class="op">$</span>estimated2 &lt;-<span class="st"> </span>estimated_lr<span class="op">$</span>estimated <span class="op">*</span><span class="st"> </span>estimated_lr<span class="op">$</span>dilution</a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="kw">head</span>(estimated_lr)</a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="co">#&gt;   row col position value type     id dilution concentration compound blankminus</span></a>
+<a class="sourceLine" id="cb24-4" title="4"><span class="co">#&gt; 1   A   1      A01 0.659 STD1    STD       NA            25     &lt;NA&gt;     0.5545</span></a>
+<a class="sourceLine" id="cb24-5" title="5"><span class="co">#&gt; 2   A   2      A02 0.649 STD1    STD       NA            25     &lt;NA&gt;     0.5445</span></a>
+<a class="sourceLine" id="cb24-6" title="6"><span class="co">#&gt; 3   A   3      A03 0.598   S1 Sample        5             0    Taxol     0.4935</span></a>
+<a class="sourceLine" id="cb24-7" title="7"><span class="co">#&gt; 4   A   4      A04 0.601   S1 Sample        5             0    Taxol     0.4965</span></a>
+<a class="sourceLine" id="cb24-8" title="8"><span class="co">#&gt; 5   A   5      A05 0.541   S1 Sample        5             0    Taxol     0.4365</span></a>
+<a class="sourceLine" id="cb24-9" title="9"><span class="co">#&gt; 6   A   6      A06 0.553   S1 Sample        5             0    Taxol     0.4485</span></a>
+<a class="sourceLine" id="cb24-10" title="10"><span class="co">#&gt;   estimated estimated2</span></a>
+<a class="sourceLine" id="cb24-11" title="11"><span class="co">#&gt; 1  23.96838         NA</span></a>
+<a class="sourceLine" id="cb24-12" title="12"><span class="co">#&gt; 2  23.51493         NA</span></a>
+<a class="sourceLine" id="cb24-13" title="13"><span class="co">#&gt; 3  21.20234  106.01172</span></a>
+<a class="sourceLine" id="cb24-14" title="14"><span class="co">#&gt; 4  21.33838  106.69189</span></a>
+<a class="sourceLine" id="cb24-15" title="15"><span class="co">#&gt; 5  18.61769   93.08844</span></a>
+<a class="sourceLine" id="cb24-16" title="16"><span class="co">#&gt; 6  19.16183   95.80913</span></a></code></pre></div>
+</div>
+<div id="summarise-the-data" class="section level2">
+<h2>Summarise the data</h2>
+<p>For summarising the “estimated_lr” based on “id” and “type”.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"></a>
+<a class="sourceLine" id="cb25-2" title="2">result&lt;-<span class="kw">dfsummary</span>(estimated_lr,<span class="st">&quot;estimated2&quot;</span>,<span class="kw">c</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;type&quot;</span>),</a>
+<a class="sourceLine" id="cb25-3" title="3">        <span class="kw">c</span>(<span class="st">&quot;STD&quot;</span>,<span class="st">&quot;Blank&quot;</span>),<span class="st">&quot;plate1&quot;</span>, <span class="dt">rm=</span><span class="st">&quot;FALSE&quot;</span>,</a>
+<a class="sourceLine" id="cb25-4" title="4">        <span class="dt">param=</span><span class="kw">c</span>(<span class="dt">strict=</span><span class="st">&quot;FALSE&quot;</span>,<span class="dt">cutoff=</span><span class="dv">40</span>,<span class="dt">n=</span><span class="dv">12</span>))</a>
+<a class="sourceLine" id="cb25-5" title="5"><span class="co">#&gt; F1</span></a>
+<a class="sourceLine" id="cb25-6" title="6"><span class="co">#&gt; F2</span></a>
+<a class="sourceLine" id="cb25-7" title="7"></a>
+<a class="sourceLine" id="cb25-8" title="8">result</a>
+<a class="sourceLine" id="cb25-9" title="9"><span class="co">#&gt;       id type  label  N   Mean     SD    CV</span></a>
+<a class="sourceLine" id="cb25-10" title="10"><span class="co">#&gt; 1 Sample   S1 plate1 10 97.804  7.325  7.49</span></a>
+<a class="sourceLine" id="cb25-11" title="11"><span class="co">#&gt; 2 Sample   S2 plate1 10 92.680  5.703  6.15</span></a>
+<a class="sourceLine" id="cb25-12" title="12"><span class="co">#&gt; 3 Sample   S3 plate1 10 78.351 10.970 14.00</span></a>
+<a class="sourceLine" id="cb25-13" title="13"><span class="co">#&gt; 4 Sample   S4 plate1 10 66.811  5.128  7.68</span></a>
+<a class="sourceLine" id="cb25-14" title="14"><span class="co">#&gt; 5 Sample   S5 plate1 10 60.213  6.797 11.29</span></a>
+<a class="sourceLine" id="cb25-15" title="15"><span class="co">#&gt; 6 Sample   S6 plate1 10 34.843  5.329 15.30</span></a>
+<a class="sourceLine" id="cb25-16" title="16"><span class="co">#&gt; 7 Sample   S7 plate1 10 31.850  4.094 12.85</span></a>
+<a class="sourceLine" id="cb25-17" title="17"><span class="co">#&gt; 8 Sample   S8 plate1 10 38.062  5.869 15.42</span></a></code></pre></div>
+</div>
+<div id="statistical-test" class="section level2">
+<h2>Statistical test</h2>
+<p>For the t test (S1 as control)</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">pval&lt;-<span class="kw">pvalue</span>(result, <span class="dt">control=</span><span class="st">&quot;S1&quot;</span>, <span class="dt">sigval=</span><span class="fl">0.05</span>)</a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="kw">head</span>(pval)</a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="co">#&gt;       id type  label  N   Mean     SD    CV   pvalue significance</span></a>
+<a class="sourceLine" id="cb26-4" title="4"><span class="co">#&gt; 1 Sample   S1 plate1 10 97.804  7.325  7.49 control              </span></a>
+<a class="sourceLine" id="cb26-5" title="5"><span class="co">#&gt; 2 Sample   S2 plate1 10 92.680  5.703  6.15    0.049          Yes</span></a>
+<a class="sourceLine" id="cb26-6" title="6"><span class="co">#&gt; 3 Sample   S3 plate1 10 78.351 10.970 14.00  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb26-7" title="7"><span class="co">#&gt; 4 Sample   S4 plate1 10 66.811  5.128  7.68  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb26-8" title="8"><span class="co">#&gt; 5 Sample   S5 plate1 10 60.213  6.797 11.29  &lt; 0.001          Yes</span></a>
+<a class="sourceLine" id="cb26-9" title="9"><span class="co">#&gt; 6 Sample   S6 plate1 10 34.843  5.329 15.30  &lt; 0.001          Yes</span></a></code></pre></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div id="example-2-analysing-result-from-a-384-well-plate." class="section level1">
+<h1>Example 2: Analysing result from a 384 well plate.</h1>
+<p>This example data contain result of dose response of few drugs (drug1, drug2, drug3, drug4) at three concentrations (C1,C2,C3) from two different cell lines (hepg2 and huh7)</p>
+<div id="input-data." class="section level2">
+<h2>Input data.</h2>
+<p>Reading the spectrophotometer readings in csv file</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">rawdata2&lt;-<span class="kw">read.csv</span>(<span class="st">&quot;384.csv&quot;</span>,<span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>,<span class="dt">strip.white =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb27-2" title="2">                  <span class="dt">na.strings =</span> <span class="kw">c</span>(<span class="st">&quot;NA&quot;</span>,<span class="st">&quot;&quot;</span>),<span class="dt">header =</span> <span class="ot">TRUE</span>,<span class="dt">skip=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb27-3" title="3"><span class="kw">dim</span>(rawdata2)</a>
+<a class="sourceLine" id="cb27-4" title="4"><span class="kw">head</span>(rawdata2)</a></code></pre></div>
+<pre><code>#&gt; [1] 16 25
+#&gt;   X  X1  X2  X3  X4  X5  X6  X7  X8  X9 X10 X11 X12 X13 X14 X15 X16 X17 X18 X19
+#&gt; 1 A 0.1 0.1 0.2 0.3 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.1 0.2 0.3 0.4 0.5 0.6 0.5 0.6
+#&gt; 2 B 0.2 0.2 0.2 0.2 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.2 0.2 0.2 0.3 0.3 0.3 0.3 0.3
+#&gt; 3 C 0.3 0.3 0.3 0.3 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.3 0.3 0.3 0.4 0.4 0.4 0.4 0.4
+#&gt; 4 D 0.4 0.4 0.4 0.4 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.4 0.4 0.4 0.5 0.5 0.5 0.5 0.5
+#&gt; 5 E 0.5 0.5 0.5 0.5 0.6 0.6 0.6 0.6 0.6 0.6 0.6 0.5 0.5 0.5 0.6 0.6 0.6 0.6 0.6
+#&gt; 6 F 0.6 0.6 0.6 0.6 0.7 0.7 0.7 0.7 0.7 0.7 0.7 0.6 0.6 0.6 0.7 0.7 0.7 0.7 0.7
+#&gt;   X20 X21 X22 X23 X24
+#&gt; 1 0.7 0.8 0.9 1.0 0.1
+#&gt; 2 0.3 0.3 0.3 0.3 0.3
+#&gt; 3 0.4 0.4 0.4 0.4 0.4
+#&gt; 4 0.5 0.5 0.5 0.5 0.5
+#&gt; 5 0.2 0.2 0.3 0.3 0.2
+#&gt; 6 0.3 0.3 0.4 0.4 0.3</code></pre>
+<p>Reading metadata</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">metadata2&lt;-<span class="kw">read.csv</span>(<span class="st">&quot;metafile 384 plate.csv&quot;</span>,<span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>,<span class="dt">strip.white =</span> <span class="ot">TRUE</span>, </a>
+<a class="sourceLine" id="cb29-2" title="2">                   <span class="dt">na.strings =</span> <span class="kw">c</span>(<span class="st">&quot;NA&quot;</span>,<span class="st">&quot;&quot;</span>),<span class="dt">header =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb29-3" title="3"><span class="kw">head</span>(metadata2)</a></code></pre></div>
+<pre><code>#&gt;   row col position  cell compound concentration    type dilution
+#&gt; 1   A   1      A01 hepg2    drug1             B  blank1       NA
+#&gt; 2   A   2      A02 hepg2    drug1            C1 treated       10
+#&gt; 3   A   3      A03 hepg2    drug1            C1 treated       10
+#&gt; 4   A   4      A04 hepg2    drug1            C1 treated       10
+#&gt; 5   A   5      A05 hepg2    drug1            C1 treated       10
+#&gt; 6   A   6      A06 hepg2    drug1            C1 treated       10</code></pre>
+</div>
+<div id="rearranging-the-data." class="section level2">
+<h2>Rearranging the data.</h2>
+<p>For appropriate naming of rows and column of rawdata2</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1"></a>
+<a class="sourceLine" id="cb31-2" title="2">rawdata2&lt;-<span class="kw">data2plateformat</span>(rawdata2,<span class="dt">platetype =</span> <span class="dv">384</span>)</a>
+<a class="sourceLine" id="cb31-3" title="3"><span class="kw">head</span>(rawdata2)</a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="co">#&gt;     1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19</span></a>
+<a class="sourceLine" id="cb31-5" title="5"><span class="co">#&gt; A 0.1 0.1 0.2 0.3 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.1 0.2 0.3 0.4 0.5 0.6 0.5 0.6</span></a>
+<a class="sourceLine" id="cb31-6" title="6"><span class="co">#&gt; B 0.2 0.2 0.2 0.2 0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.2 0.2 0.2 0.3 0.3 0.3 0.3 0.3</span></a>
+<a class="sourceLine" id="cb31-7" title="7"><span class="co">#&gt; C 0.3 0.3 0.3 0.3 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.3 0.3 0.3 0.4 0.4 0.4 0.4 0.4</span></a>
+<a class="sourceLine" id="cb31-8" title="8"><span class="co">#&gt; D 0.4 0.4 0.4 0.4 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.4 0.4 0.4 0.5 0.5 0.5 0.5 0.5</span></a>
+<a class="sourceLine" id="cb31-9" title="9"><span class="co">#&gt; E 0.5 0.5 0.5 0.5 0.6 0.6 0.6 0.6 0.6 0.6 0.6 0.5 0.5 0.5 0.6 0.6 0.6 0.6 0.6</span></a>
+<a class="sourceLine" id="cb31-10" title="10"><span class="co">#&gt; F 0.6 0.6 0.6 0.6 0.7 0.7 0.7 0.7 0.7 0.7 0.7 0.6 0.6 0.6 0.7 0.7 0.7 0.7 0.7</span></a>
+<a class="sourceLine" id="cb31-11" title="11"><span class="co">#&gt;    20  21  22  23  24</span></a>
+<a class="sourceLine" id="cb31-12" title="12"><span class="co">#&gt; A 0.7 0.8 0.9 1.0 0.1</span></a>
+<a class="sourceLine" id="cb31-13" title="13"><span class="co">#&gt; B 0.3 0.3 0.3 0.3 0.3</span></a>
+<a class="sourceLine" id="cb31-14" title="14"><span class="co">#&gt; C 0.4 0.4 0.4 0.4 0.4</span></a>
+<a class="sourceLine" id="cb31-15" title="15"><span class="co">#&gt; D 0.5 0.5 0.5 0.5 0.5</span></a>
+<a class="sourceLine" id="cb31-16" title="16"><span class="co">#&gt; E 0.2 0.2 0.3 0.3 0.2</span></a>
+<a class="sourceLine" id="cb31-17" title="17"><span class="co">#&gt; F 0.3 0.3 0.4 0.4 0.3</span></a></code></pre></div>
+</div>
+<div id="to-convert-data-into-a-dataframe.-1" class="section level2">
+<h2>To convert data into a dataframe.</h2>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1">OD_df2 &lt;-<span class="st"> </span><span class="kw">plate2df</span>(rawdata2)</a>
+<a class="sourceLine" id="cb32-2" title="2"><span class="kw">head</span>(OD_df2)</a>
+<a class="sourceLine" id="cb32-3" title="3"><span class="co">#&gt;   row col position value</span></a>
+<a class="sourceLine" id="cb32-4" title="4"><span class="co">#&gt; 1   A   1      A01   0.1</span></a>
+<a class="sourceLine" id="cb32-5" title="5"><span class="co">#&gt; 2   A   2      A02   0.1</span></a>
+<a class="sourceLine" id="cb32-6" title="6"><span class="co">#&gt; 3   A   3      A03   0.2</span></a>
+<a class="sourceLine" id="cb32-7" title="7"><span class="co">#&gt; 4   A   4      A04   0.3</span></a>
+<a class="sourceLine" id="cb32-8" title="8"><span class="co">#&gt; 5   A   5      A05   0.2</span></a>
+<a class="sourceLine" id="cb32-9" title="9"><span class="co">#&gt; 6   A   6      A06   0.2</span></a></code></pre></div>
+</div>
+<div id="for-an-overview-of-the-plate." class="section level2">
+<h2>For an overview of the plate.</h2>
+<p>For heat map</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"></a>
+<a class="sourceLine" id="cb33-2" title="2">data2&lt;-<span class="kw">matrix96</span>(OD_df2,<span class="st">&quot;value&quot;</span>,<span class="dt">rm=</span><span class="st">&quot;TRUE&quot;</span>)</a>
+<a class="sourceLine" id="cb33-3" title="3"><span class="kw">heatplate</span>(data2,<span class="st">&quot;Plate 384&quot;</span>, <span class="dt">size=</span><span class="fl">1.5</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAAFQCAMAAACBJ1miAAAC1lBMVEUAAAAAAFQAAIAAVKYAgMYzMzNNTU1OTk5OTlxOTmlOTnZOToFOTpdOY2NOaU5OaXZOcLVOdrVOgYFOgc9OjJhOjM9Ol6tOl89UAABUAFRUAIBUVKZUpuNVTk5cTk5cTlVpTk5pTnZpq/9wTk52Tk52TnZ2Tpd2dk52dpd2drV2l7V2l892tc92teiAAACAAFSAAICAxsaAxv+BTk6BgU6Bz/+I0/+MTlWXTk6XTmmXTnaXTpeXdk6XdnaXdrWXl3aXl5eXl8+XvrWXz/+Yz7WY6P+ZAACbAgGfBgOiCQSlDAamVACmVFSmVICmxqam4/+pEAirEgmraU6vFQuyFwy1Gg61dk61dmm1dna1dpe1l061l7W1q3a1tZe1vpe1z7W107W16M+16Oi16P+5HRC7HhK/IRPCIxXFJRfGgADG///JJxjMKRrPjE7Pl07Pl3bPz5fP6LXP/8/P/+jP///QKxvSLR3WLx7YMyHZNiLbOSXcPCfdPynfQizfRC3gRS3hSDDiSzLjTTTjplTj///lUDbmUjjnVTrop2PotWnotXbotZfoz5fo6LXo/8/o///pWD3qWj7rXUHr6+vsX0LtYkXvZEfvZUjvZkjwaUnxakrybUvyb0zzcU30c071dk/1d1D2elH2e1H3flL4gFP4glT5hFX6hlb6iFf7ilj8jFj8jlr8kFz8k1/9lmH9mGP9m2X9nWf9n2r9omz9pG79p3H9qXP9q3X9rnf9sHn9s3z9tX79t4D9uoP9u4T9vYb9vof9v4j9wYr9wov9w439xY79xo/9x5H9yJL9ypP9y5X9zJX9zJb9zpj9z5n90Jr90pz905391J/91qL916X+2aj+2qv+3K7+3bL+37T+4Lj+4br+477+5cH+5sT+6Mf+6cr+6s3+7ND+7dP+79f+8Nn/vnb/xoD/z5f/04j/46b/6Jj/6LX//8b//8///+P//+j///+ii7piAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAXQklEQVR4nO1diZ8lV1V+SSadOIRVYQYMGHFmNJoO2GxhizGjQR0hqDBOkCUQIXSEJpFhh4B2RGyQAZ86bqzGDUUYBVSWYV807G7Dvg79aN70dP0H1F3PrapTd3tV71Qn5/slr+98VV3n1f36nnvPXUcFgxQj6i9wWwcLQAwWgBgsADFYAGKwAMRgAYjBAhCDBSAGC0AMFoAYLAAxWABisADEYAGIwQIQgwUgBgtADBaAGCwAMVgAYrAAxGABiMECEIMFIAYLQAwWgBgsADFYAGKwAMRgAYjBAhCDBSAGC0AMFoAYLAAxWABisADEYAGIwQIQgwUgBgtADBaAGCwAMVgAYrAAxGABiMECEIMFIAYLQAwWgBgsADFYAGKwAMRgAYjBAhCDBSAGC0AMFoAYbQKsjiTOuLIoTh846ybnysY9rmvevl7eq+7a2D0anWnuOHXxjk6/7a0QAQFGo6W6AKtnNgVQd4sLIv+VbgLLIxYggFYBVDavl3/XYQFOXSzuWC7FUh+ro/PVrSMWIISAAMXymdcpAYSTKfP19AH5o8xzx9MobOwu+WVxr/Y8G7t/ml1QCLECaJe0pAVYH7meRmFZ/HMVSkApA9cBQQRd0A5ZB5w+oBz8DnWllGFJ/1OjZJQcy0IZyZeFgQUIIlQJl7lq6gDhdbQA0ttUqgNxUSggfirntF7+kwUIIiCAyEkpgGrdGAHWQR6AqIpPHxDUxu6zbpIasQBBhOqAQgkg/rCXVH62ClCsnnGlKRpnXLmK3sKoI1KAjd2lz4c6QP3TArKdBUhFtAA7pH8X7SFZLagQWd+kEsIFnbpYuSB9gV1QEJECyNan6m5YhWaojrcKp1W6WrnAAgQRKYBu5ZRRgS4HslIGPwQ9QCJl3Q4LEAT3hhKDBSAGC0AMFoAYLAAxWABisADEYAGIwQIQgwUgBgtAjBYBxiXkx7hAPgZI9muNBWABBpTXLMAQSRaABehUAMa8EFUCRqNqaoCk/LJ9kPMsAZsPuQYToPw2hfhGkBogWYx7IecrwOSyRVSA8cmTJ0duSiZPnDihyVtuuaVJqlQ2GTJ0/PhxTR47dkzn4Pjmm2/2kUePHjXkjTfeqMlrr73WkFdcccWo+sLzFWDr0JMvPdIUQH4d8YUgJZInTsiMKWS2yIypkDqVS4YMHT8uFShkVovMLlRWi8xuI48elQoUKv+FAoXMf6FAofJfKOC88JwFmF54ZGW/SJx99tmVO9T3cVNlUuWLSKl8qZEmlUmGDCkBRErltSRVXreSSgBJKgFESgkgSSVAxfoc4JhZWywmu3S64oLk93FTIinzRaZkvtRJncolQ4akADIl81r5EJnX7aQUQJFSAElKARQpBai+8FxLwNbBhYWF8w4jAoxsHTAC1zyyrnkErtkhwbNnkSFDtg4YgbsfWXePk1AHjGwdMII6YGTrAPvCcxWg9EBFoXwQN0MpmqFrIu+ND6rar38MkOzX2jwE2LpKeB8nFGDMBRwJD8UFTfeUdfDCfkSAoQW9KFls+0h4uq90QdO91yACJISyOlKqRq05ZKohkYM9kPMWYOtQU4CUUFbHqtWoNYdMNqSzrWNy/iVANEUbkXB8KGti1UrUmkPOzZCfnANqdcCddWdQxQXFh7I6Vq1GrTlksiHhQ3og5+6CDiKBWEooe4txo27UmkOmGpK1aPfkvAXgSLhBzlcAG4dV7dc/Bkj2a20uAlTiAMa8wJHwUFxQMXEaQbVKeFhBL0oW2z4SXhNDAStoMzQhlIWhWpXKJlMNiRzsgZyfAKr6xZqhKaEsDNXqVC6ZbEhnW8fkHAWYWO/TjITjg0kYqjWpTHJuhvzkjDAbTKrNBcyPFgF2VeiKC4oPZWGoVqdyyWRDwof0QM5UAtb17g2nDywVqzvMjxYBVC8QLkBCKHvcDtUet549i0w1JGvR7slZBFg+41GqBJy673WiMOgfLQK01wGxDUFacpDNUJ3dGz98U3HqPlfqHy0CeFpBzY8Bkv1aw/P3ChwNAdbPkjmvf7QJUI0DGBF4BA64IakEVDGQv+thl4BfwNEQIKoO8AowLHePkomevZM64BdxNAQ4feB81Qo639cKqvbFufaH1uuAkgVBV8Qv4agKIP6PiQNUb/Ql6KyIhL4EMyXQpLLJVEMiB3sgvQI8Ggd+cxsqAkA04AiQ0pdgpoXbVC6ZbEhnW8ekX4BfwTGLACoaqHdFxEfzZlp4ZYJ4Djk3Q37Sj1/DMYsA2LSUlL4E+c3dVC6ZbEj4kB5Ibwl4DI5ZBECHJFP6Eo4ZN6pT2WSqIVmLdk96BXgsjlkEmOCR8LBanChJ0Qz9TRwzCIC3gpofAyT7tYbn3VNxZArAY/LJeBqOtIdwJJzvgq7FkSmAKgI70Up4WEEvShYEkfDTceQKsO+wQ1cESAhlYVW0SmWTqYZEDoZIM8cRWfwtSRj9t3d6BfgtHF0LkBLKwqponcolkw0V4yBp5rmPkcXfxRiZHB8S4Bk4ZhegHgnHB5OwKtqkMsk+DKFT3tHRf3unH8/BkStA+/T0+FAWVkXrVC6ZbEj4kABp57kji78FCaP/cKe3BDwXR64A7XVAQigLq6LBs2eRqYZkLRogoQ5oLP6WZH1yfEiA5+HoXIChtThRkqIZ+nwcPQhQ/xgg2a81PO9egCNXAFkHcCycgBfiSHsIR8L5LuhFOHIFUEVgsSnA0IJelCwIIuEX48gWwK0EKgIkhLJmRxiTyiZTDYkcDJFo0AtTExuT40MCvARH1wKkhLJmVzCbyiWTDelc95Fo0GtGnMfI5PiQAC/FMbsA9Ug4Puw0u4JV9gfLIfswhAa96OCzvdOPl+HIFkDUAeiWZfGhrN0VzKRyyWRDwocESDToRaenw53eEvA7OMxlOw1IHe+4JH+e2T4zrr0OSAhlrcMdgWfPIlMNyVo0QKJBLzo9Pa4O+F0c+mp1OYCYmbu8hDwkQoChtThRkqIZ+ns4TAFwp4KKSbmnfxk72TdKgPrHAMl+reECCLy8AvdKZTL06g592nujELQIwIjA7+PQV93lAPLnxt2xUsCRcL4Leg0OfdUtAet2Um6jHqgu0LAr9Vz7Qwt6UbIgiIRfi0NfdeuAZXPytUeAyXmHi62DZvfuigAJoSxsiq1S2WSqIZGDIRINemFmXGNudkiAP8KhrzrLAZTjEcXg9CPbmqFqeR4+Ozo+lIVNsXUql0w2pHPdR6JBrxlxrsyOtnf6BfhjHOayPnpcrA9QnmjVOWu8IYBbBdcj4fiwEzbFNqlMsg9DaNCLDj7bO/34ExzB38MF8KwTjg9lYVNsncolkw0JHxIg0aAXnR0Nd3pLwJ/iyBSgLAHTPS0Ts+JDWdgUGzx7FplqSNaiARINetHZ0XF1wJ/hyBNA1QEtO2YNq8WJkhTN0D/HkSdAMRF//BOsBDQ/Bkj2aw3Pu7/AkSmA7A01xwcMJVuHLcBf4sgVgJGKv8KR9hDuisivA16HI08AvUzVRAOu/aH1OqBkQdAV8Xoc3QuQ0JdgTmQxqWwy1ZDIwRDpTE+HQXn0TnOajF+AN+DoWoCUvgRzKpdN5ZLJhnRe+khnejoMyqN3mhPFAgK8EcfsAtS7IuLjfnMqV+V8rhyyD0Po5uvoneZEsQDehCNTADUzET3GKr4vwZ7KZVK5ZLIh4UMCpDM9HQbl0TvtiWL+EvBmHJkC+Crh+L4E60Z1KptMNSRr0QDpTE+HQXn0zrg64K9xdC7A0FqcKEnRDL0ZRw8C1D8GSPZrDc+7v8HRiQCMCPwtjrSHcCSc74L+DscsAnAkXCO9Avw9ju4FSAhl4VBqlcomUw2JHAyR8Qu14wZk/gFH1wKkhLJwKLVO5ZLJhnSu+8j4hdqRg/JvwTG7APVIOD7shEOpbTCZR/ZhKH6hduSg/D/imF2AouaC4kNZOJRap3LJZEPChwTI+IXakYPy/4SjewESQlnrcEfg2bPIVEOyFg2Q8Qu14+qAt+Iwl2GbUL0wwLtvqEeAobU4UZKiGfrPOPRVZ32Amo/oPz/AK0D9Y4Bkv9ZwAd6GwxQAOzdUT4mO2TuaI+FUvL0C9wrMjtYLA2bYPX1Y3mYwLugYDn0V1gfohQGh8wMEOBKukV4B/gVHowRILC/FlICWSDgQtTrkyZMnR24qm0w1JHIwRMYv1LbzFb0C/CsOfbXm8peXkuoAR4CUUPbkSfm6kMolkw3pXPeR8Qu17Zx1vwDvwKGvwvoAvTDAf36AK0A9Eo4PO9XbuqlMsg9D8Qu17Zx1P96Jw1yG9QF6YUBuHJAQysq3dVO5ZLIh4UMCZPxCbZiz7i0B78IRFC5ZgIRQ1jrcEXj2LDLVkKxFA2T8Qu24OuDfcHQuwNBanChJ0Qz9dxy5Aoi1AS27p9c/Bkj2aw3Pu//AkSuAWKdqlgcwYvBuHGkPiYqEh/XHPpgS8B4cPQgwLHePkomevZM64L04MgWQ9e/WwV1NAYbW64CSBUFXxPtwzCCAPUy1KkBCXwIMdqtUNplqqBiHyfiV8nbjXa8Ax3HkCwD57wqQ0pcAg906lUsmGyrGQTJ+pbzZpi4gwPtxZAvwbJP/9a6I+LgfBrvREfB4sg9D8Svl7eZ0fnwAR64Ae38cNkupuqD4vgQY7NapXDLZUDEOkvEr5WHzdW8J+CCOXAH2LG5eYjZLqVXC8X0JMNgNnj2LTDVUjMNk/Er5uDrgQzhyBRB7Few1gVi1FTasFidKUjRDP4xjBgGKNe6KQEk87z6CYxYBtg7yoebx+CiOtIdwJJzvgj6GI1cAz8atwwp6UbIgiIQ/jqN7ARJCWRjsVqlsMtVQMQ6T/qDX3abdbrzrFeATOLoWICWUhcFuncolkw0V4yDpD3rdbdrNNnUBAf4Tx+wC1CPh+LATBrvREfB4sg9D/qDX3abdbk7nx3/hmF2AouaC4kNZGOzWqVwy2VAxDpKBoNfZph02X/eWgE/i6F6AhFAWBrvBs2eRqYaKcZj0B73uNu1xdcCncHQuwNBanChJ0Qz9NA5zGaYBbeyWu3bnnh/Q/Bgg2a81XIDP4NBXYTmAmBAqJuiGzg+Q23XsQu5h4PgsDn0VpoKuCxmWl0LnB1RQ/QMYlrcZjAsS+FwF7pXqZOgy5T8/YLpH/O2voNvVDCzoRcmCIBL+PA59tbIcQEzM9Z8fMN37k0eKzYfj09MDUatDwk7noT3HgFR9804yx5DIwdDu6f6gF32mV4D/xoGUgFMXm/3rW7evn+77mWuK6WXo9PT4UBZ2Og/tOQakHp91R20zDOls8+2e7g960Wf6BfgfHPqqsxxgY7fNdo8A1+8vXvkkdHp6fNgJO52H9hwDEh2q7cOQP+hFn+nH/+LQV2E5gM5///kB0303/NTWVTegLig+lIWdzkN7jgGpx2edZI4h4UMahqpkIOhFn+ktAf+Hw1y26wOcc8R85wc8+zde/bMt09PjQ1nY6Ty05xiQUAc0TvKKNyRr0bqhGukPetFnegX4fxz+YtMuwOFnPWGRp6c3SI8AJ3BkCzDZeQ0v1MZJPO++gCNbAPVf2q/fpvFFHGkP4Ug43wV9CUeeANM98hQlXqhdJb0CfBlHrgCiF6JloTYEqOikZWeoFsLO0J5jQIaGf1FDEB47c57RkV4g/UEveiC3V4Cv4MgUYN/1u9oWakOAik5adoZqIewM7TkGZGj4FzUE4bEz5xkd6QXSH/SiB3L7BfgqjlwBDq/sb1moDQEqOmnZGaqFsDO05xiQoeFf1BCEx04gjY70AukPetEDy/z4Go5sATYvPYK7IAhQ0UnLzlAthJ2hPceADA3/ooYgPHbmPKMjvUAGgl70QG5vCfg6jmwBijU8EHMDVHTSsjNUC2Fn/D7doeFf1BCEx86cZ3SkF0h/0IseyO0V4Bs48gXYOvQkjoTrpEeAb+LIF0A3hZoC1D8GSPZrDc+7b+GYQYBijQVIEODbOPIEYBCBuyLy64COBVhbWFjAlqkOrtcBJQuCrohuBRCrk2CVXkUAJ5p3hsXra53HbhdAy/HjTldEVAdDzbp6uvP4Wl9C/ZmShGeiI/VwhkzyoHynAmw+tP0cMYjmnWHxxlpntwug5fhxpysiroOhal0/vXVQvvHMojI9HR2pN10iOYPynQqgdgpSa+XrXREQzTvD4uhaZ3SwG+2fmLGDAe1LCDwTHal3vlLyoHy3Aqg5iSu6Fqi4IIjmnWHxxlrncYEMdo/b+ifiOhiq1vXTncdX+xIazxQkPBMdqbddIhmD8j0IYHeLqFbCEM07w+L1tc5jtwug5fhxpysiqoOhZh3qALwvof5MScIz0ZF6qAOSB+U7FaC9DohtCNKS278ZKoJgvBXU/Bgg2a+1eQggtoyDOIAxL3AkPBQXpNZnoIHYwIJelCy2fSQs61+xd2hTACe+3dbT07selO9BAKwZ6sa323p6eueD8j0IoDYMqkfCEN9u6+npnQ/KdyyArAPQXRMhvt3W09M7H5TvWIDKtNBqJQzx7baent71oPy8BBhaixMlbwXNUI8A9Y8Bkv1am78AjHkhKhIe1h/7rbQEsAAsAAvAAgxGgBrORlK3FbJnsAAswMDJnsECbAsBGL2BBSAGC0AMFoAYLAAxogQwPaVi1EyPmU0WFsxyJhhJFksMFLt10JxLKTj9W+Wvm9+xSTUX4JKFOx8xVsyeIcqYTEpj+rIwpk77EMZuUCPZwphc5ymNXa5/vbRgnrTzAvkdhKE/NC8x3atIYehyRYrjNC/Ql51DvfpEjAATnVlizoQ+Zka+rdljdM2osmK/cpmawGEcKil+XZ+RsnnJfpWUjxavurZLWyl/XC9SytgTTS6u3UV/idKYunNlv/lm0tirjLiTO5pfX1NkaWzzQXc6Un5zYegPfkC/xOScc39epMSd3/uRB4qkWCz9oLvqd1ybzzS1CAFWdurVq3ICL2SyLRc/8TDFbR0yZwCpmaYGerLL9MIj5oJMlqx6tCCnFygrJaNS0tivGtPFM8/9OZkqjd1fksIY/Dp8yc37yZS0YJOTuwlj+8Wd37mdkmxl5+NVShia3GG/frPJD5W/IVL2rXpGkgsqnJlDhSkBW4eeogtrWcBN6b7wcc7RuPpGpwQYAfThTepfNRekfsMk13apeTPSmEgqY+rXH2dckDImLytjzuPFw7RZMK1fB0jx+yIFb9UzEgXYOmjmzk33GCe/aLylKLqqFIjNb8TbSljNlKtXqdLp7DS5IDwUJoAwppLCmHL8i6YOUMauFillTN0pPVe1XlHGnlI+TBvSLyEPb1w0hlRSGJIpeKuekSaAc9Sbydjy1StfVRZk+AsvClsZiCybnGer84sOBUqANAaF4Wp1p62EpbHL678+0bmujZlK+KJf37NovtaT9UtM9/22SglD9s02H6zvHKIAalcnC5nXquGxWCU3L3UEWNEX9d+fuRFWJMg6wP7dQyuosoWUzGttrEpqY4pcWcRKVfG9ez1AmyzbPvolTEqWIPtm0wvujbxVf0gRwMn/SmaavxVBbl0lb10BF2SrZqcESA+9yzxalHntugsrgDYGmXl1tRmqjMlm6Aq4IGmsVgKEDj/2g+p3F4tXnGNe4rv3fIB5K22sfOZ0z4/W3qpnpAjgNOlF2taybhygydIDmyY//NE7h9aXSV0dt8UB2php8tsdHd04QJPKGMwuNrGDqZknC+fob17eeXv7Eq9QKWHIXF+zqWEJwOgPLAAxWABisADEYAGIwQIQgwUgBgtADBaAGCwAMVgAYrAAxGABiMECEIMFIAYLQAwWgBgsADFYAGKwAMRgAYjBAhCDBSAGC0AMFoAYLAAxWABisADEYAGIwQIQgwUgBgtADBaAGCwAMVgAYrAAxGABiMECEIMFIAYLQAwWgBgsADFYAGKwAMRgAYjBAhCDBSAGC0AMFoAYLAAxWABisADEYAGIwQIQgwUgBgtADBaAGCwAMVgAYrAAxPg+3qLNKnQ95voAAAAASUVORK5CYII=" /><!-- --></p>
+</div>
+<div id="for-joining-metadata2-and-od_df2." class="section level2">
+<h2>For joining metadata2 and OD_df2.</h2>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">data_DF2&lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">inner_join</span>(OD_df2,metadata2,<span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;row&quot;</span>,<span class="st">&quot;col&quot;</span>,<span class="st">&quot;position&quot;</span>))</a>
+<a class="sourceLine" id="cb34-2" title="2"><span class="kw">head</span>(data_DF2)</a>
+<a class="sourceLine" id="cb34-3" title="3"><span class="co">#&gt;   row col position value  cell compound concentration    type dilution</span></a>
+<a class="sourceLine" id="cb34-4" title="4"><span class="co">#&gt; 1   A   1      A01   0.1 hepg2    drug1             B  blank1       NA</span></a>
+<a class="sourceLine" id="cb34-5" title="5"><span class="co">#&gt; 2   A   2      A02   0.1 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb34-6" title="6"><span class="co">#&gt; 3   A   3      A03   0.2 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb34-7" title="7"><span class="co">#&gt; 4   A   4      A04   0.3 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb34-8" title="8"><span class="co">#&gt; 5   A   5      A05   0.2 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb34-9" title="9"><span class="co">#&gt; 6   A   6      A06   0.2 hepg2    drug1            C1 treated       10</span></a></code></pre></div>
+<p>For categorical view of cells</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1">data3&lt;-<span class="kw">matrix96</span>(data_DF2,<span class="st">&quot;cell&quot;</span>,<span class="dt">rm=</span><span class="st">&quot;TRUE&quot;</span>)</a>
+<a class="sourceLine" id="cb35-2" title="2"><span class="kw">heatplate</span>(data3,<span class="st">&quot;Plate 384&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>For categorical view of compound</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">data4&lt;-<span class="kw">matrix96</span>(data_DF2,<span class="st">&quot;compound&quot;</span>,<span class="dt">rm=</span><span class="st">&quot;TRUE&quot;</span>)</a>
+<a class="sourceLine" id="cb36-2" title="2"><span class="kw">heatplate</span>(data4,<span class="st">&quot;Plate 384&quot;</span>, <span class="dt">size=</span><span class="dv">2</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="sorting-blank-wells-and-reducing-blanks." class="section level2">
+<h2>Sorting blank wells and reducing blanks.</h2>
+<p>The data contain separate blanks for drug1, drug2, drug3 and drug4 (blank1, blank2,blank3 and blank 4 respectively)</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1">data_blk&lt;-<span class="kw">reduceblank</span>(data_DF2, </a>
+<a class="sourceLine" id="cb37-2" title="2"><span class="dt">x_vector=</span><span class="kw">c</span>(<span class="st">&quot;drug1&quot;</span>,<span class="st">&quot;drug2&quot;</span>,<span class="st">&quot;drug3&quot;</span>,<span class="st">&quot;drug4&quot;</span>),</a>
+<a class="sourceLine" id="cb37-3" title="3"><span class="dt">blank_vector =</span> <span class="kw">c</span>(<span class="st">&quot;blank1&quot;</span>,<span class="st">&quot;blank2&quot;</span>,<span class="st">&quot;blank3&quot;</span>,<span class="st">&quot;blank4&quot;</span>), <span class="st">&quot;value&quot;</span>)</a>
+<a class="sourceLine" id="cb37-4" title="4"><span class="kw">dim</span>(data_blk)</a>
+<a class="sourceLine" id="cb37-5" title="5"><span class="co">#&gt; [1] 384  10</span></a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw">head</span>(data_blk)</a>
+<a class="sourceLine" id="cb38-2" title="2"><span class="co">#&gt;   row col position value  cell compound concentration    type dilution</span></a>
+<a class="sourceLine" id="cb38-3" title="3"><span class="co">#&gt; 1   A   1      A01   0.1 hepg2    drug1             B  blank1       NA</span></a>
+<a class="sourceLine" id="cb38-4" title="4"><span class="co">#&gt; 2   A   2      A02   0.1 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb38-5" title="5"><span class="co">#&gt; 3   A   3      A03   0.2 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb38-6" title="6"><span class="co">#&gt; 4   A   4      A04   0.3 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb38-7" title="7"><span class="co">#&gt; 5   A   5      A05   0.2 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb38-8" title="8"><span class="co">#&gt; 6   A   6      A06   0.2 hepg2    drug1            C1 treated       10</span></a>
+<a class="sourceLine" id="cb38-9" title="9"><span class="co">#&gt;   blankminus</span></a>
+<a class="sourceLine" id="cb38-10" title="10"><span class="co">#&gt; 1       -0.4</span></a>
+<a class="sourceLine" id="cb38-11" title="11"><span class="co">#&gt; 2       -0.4</span></a>
+<a class="sourceLine" id="cb38-12" title="12"><span class="co">#&gt; 3       -0.3</span></a>
+<a class="sourceLine" id="cb38-13" title="13"><span class="co">#&gt; 4       -0.2</span></a>
+<a class="sourceLine" id="cb38-14" title="14"><span class="co">#&gt; 5       -0.3</span></a>
+<a class="sourceLine" id="cb38-15" title="15"><span class="co">#&gt; 6       -0.3</span></a></code></pre></div>
+</div>
+<div id="to-summarise-the-result-from-a-plate." class="section level2">
+<h2>To summarise the result from a plate.</h2>
+<p>For summarising the result in the order cell, compound,concentration,type and by omitting blanks.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1">result2&lt;-<span class="kw">dfsummary</span>(data_blk,<span class="st">&quot;blankminus&quot;</span>,</a>
+<a class="sourceLine" id="cb39-2" title="2">        <span class="kw">c</span>(<span class="st">&quot;cell&quot;</span>,<span class="st">&quot;compound&quot;</span>,<span class="st">&quot;concentration&quot;</span>,<span class="st">&quot;type&quot;</span>),</a>
+<a class="sourceLine" id="cb39-3" title="3">        <span class="kw">c</span>(<span class="st">&quot;blank1&quot;</span>,<span class="st">&quot;blank2&quot;</span>,<span class="st">&quot;blank3&quot;</span>,<span class="st">&quot;blank4&quot;</span>),</a>
+<a class="sourceLine" id="cb39-4" title="4">        <span class="dt">nickname=</span><span class="st">&quot;384well&quot;</span>, </a>
+<a class="sourceLine" id="cb39-5" title="5">        <span class="dt">rm=</span><span class="st">&quot;FALSE&quot;</span>,<span class="dt">param=</span><span class="kw">c</span>(<span class="dt">strict=</span><span class="st">&quot;FALSE&quot;</span>,<span class="dt">cutoff=</span><span class="dv">40</span>,<span class="dt">n=</span><span class="dv">12</span>))</a>
+<a class="sourceLine" id="cb39-6" title="6"><span class="co">#&gt; F1</span></a>
+<a class="sourceLine" id="cb39-7" title="7"><span class="co">#&gt; F2</span></a>
+<a class="sourceLine" id="cb39-8" title="8"><span class="co">#&gt; F3</span></a>
+<a class="sourceLine" id="cb39-9" title="9"><span class="co">#&gt; F4</span></a>
+<a class="sourceLine" id="cb39-10" title="10"><span class="kw">head</span> (result2)</a>
+<a class="sourceLine" id="cb39-11" title="11"><span class="co">#&gt;    cell compound concentration      type   label N   Mean    SD     CV</span></a>
+<a class="sourceLine" id="cb39-12" title="12"><span class="co">#&gt; 1 hepg2    drug1            C1   treated 384well 7 -0.300 0.058  19.25</span></a>
+<a class="sourceLine" id="cb39-13" title="13"><span class="co">#&gt; 2 hepg2    drug1            C1 untreated 384well 8 -0.250 0.053  21.38</span></a>
+<a class="sourceLine" id="cb39-14" title="14"><span class="co">#&gt; 3 hepg2    drug1            C2   treated 384well 8 -0.238 0.130  54.84</span></a>
+<a class="sourceLine" id="cb39-15" title="15"><span class="co">#&gt; 4 hepg2    drug1            C2 untreated 384well 8 -0.238 0.052  21.79</span></a>
+<a class="sourceLine" id="cb39-16" title="16"><span class="co">#&gt; 5 hepg2    drug1            C3   treated 384well 8  0.150 0.278 185.16</span></a>
+<a class="sourceLine" id="cb39-17" title="17"><span class="co">#&gt; 6 hepg2    drug1            C3 untreated 384well 8 -0.200 0.000   0.00</span></a>
+<a class="sourceLine" id="cb39-18" title="18"><span class="kw">dim</span> (result2)</a>
+<a class="sourceLine" id="cb39-19" title="19"><span class="co">#&gt; [1] 48  9</span></a></code></pre></div>
+<p>For summarising the result in the order cell, compound and concentration and by omitting blanks (all blanks are marked as “B” in concentration), drug 2 and huh7.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">result3&lt;-<span class="kw">dfsummary</span>(data_blk,<span class="st">&quot;blankminus&quot;</span>,</a>
+<a class="sourceLine" id="cb40-2" title="2">        <span class="kw">c</span>(<span class="st">&quot;cell&quot;</span>,<span class="st">&quot;compound&quot;</span>,<span class="st">&quot;concentration&quot;</span>),</a>
+<a class="sourceLine" id="cb40-3" title="3">        <span class="kw">c</span>(<span class="st">&quot;B&quot;</span>,<span class="st">&quot;drug2&quot;</span>,<span class="st">&quot;huh7&quot;</span>),</a>
+<a class="sourceLine" id="cb40-4" title="4">        <span class="dt">nickname=</span><span class="st">&quot;&quot;</span>, </a>
+<a class="sourceLine" id="cb40-5" title="5">        <span class="dt">rm=</span><span class="st">&quot;FALSE&quot;</span>,<span class="dt">param=</span><span class="kw">c</span>(<span class="dt">strict=</span><span class="st">&quot;FALSE&quot;</span>,<span class="dt">cutoff=</span><span class="dv">40</span>,<span class="dt">n=</span><span class="dv">12</span>))</a>
+<a class="sourceLine" id="cb40-6" title="6"><span class="co">#&gt; F1</span></a>
+<a class="sourceLine" id="cb40-7" title="7"><span class="co">#&gt; F2</span></a>
+<a class="sourceLine" id="cb40-8" title="8"><span class="co">#&gt; F3</span></a>
+<a class="sourceLine" id="cb40-9" title="9"><span class="kw">head</span> (result3)</a>
+<a class="sourceLine" id="cb40-10" title="10"><span class="co">#&gt;    cell compound concentration label  N   Mean    SD      CV</span></a>
+<a class="sourceLine" id="cb40-11" title="11"><span class="co">#&gt; 1 hepg2    drug1            C1       15 -0.273 0.059   21.72</span></a>
+<a class="sourceLine" id="cb40-12" title="12"><span class="co">#&gt; 2 hepg2    drug1            C2       16 -0.238 0.096   40.31</span></a>
+<a class="sourceLine" id="cb40-13" title="13"><span class="co">#&gt; 3 hepg2    drug1            C3       16 -0.025 0.262 1048.17</span></a>
+<a class="sourceLine" id="cb40-14" title="14"><span class="co">#&gt; 4 hepg2    drug3            C1       15  0.207 0.070   34.05</span></a>
+<a class="sourceLine" id="cb40-15" title="15"><span class="co">#&gt; 5 hepg2    drug3            C2       16  0.212 0.072   33.83</span></a>
+<a class="sourceLine" id="cb40-16" title="16"><span class="co">#&gt; 6 hepg2    drug3            C3       16  0.025 0.191  765.94</span></a>
+<a class="sourceLine" id="cb40-17" title="17"><span class="kw">dim</span> (result3)</a>
+<a class="sourceLine" id="cb40-18" title="18"><span class="co">#&gt; [1] 9 8</span></a></code></pre></div>
+</div>
+<div id="statistical-test." class="section level2">
+<h2>Statistical test.</h2>
+<p>For t-test</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">pvalue&lt;-<span class="kw">pvalue</span>(result3,<span class="st">&quot;C3&quot;</span>,<span class="dt">sigval=</span><span class="fl">0.05</span>)</a>
+<a class="sourceLine" id="cb41-2" title="2">pvalue</a>
+<a class="sourceLine" id="cb41-3" title="3"><span class="co">#&gt;    cell compound concentration label  N   Mean    SD      CV   pvalue</span></a>
+<a class="sourceLine" id="cb41-4" title="4"><span class="co">#&gt; 1 hepg2    drug1            C3       16 -0.025 0.262 1048.17 control </span></a>
+<a class="sourceLine" id="cb41-5" title="5"><span class="co">#&gt; 2 hepg2    drug1            C1       15 -0.273 0.059   21.72  &lt; 0.001</span></a>
+<a class="sourceLine" id="cb41-6" title="6"><span class="co">#&gt; 3 hepg2    drug1            C2       16 -0.238 0.096   40.31   0.0024</span></a>
+<a class="sourceLine" id="cb41-7" title="7"><span class="co">#&gt; 4 hepg2    drug3            C3       16  0.025 0.191  765.94 control </span></a>
+<a class="sourceLine" id="cb41-8" title="8"><span class="co">#&gt; 5 hepg2    drug3            C1       15  0.207 0.070   34.05  &lt; 0.001</span></a>
+<a class="sourceLine" id="cb41-9" title="9"><span class="co">#&gt; 6 hepg2    drug3            C2       16  0.212 0.072   33.83  &lt; 0.001</span></a>
+<a class="sourceLine" id="cb41-10" title="10"><span class="co">#&gt; 7 hepg2    drug4            C3       16  0.063 0.266  424.83 control </span></a>
+<a class="sourceLine" id="cb41-11" title="11"><span class="co">#&gt; 8 hepg2    drug4            C1       15  0.207 0.070   34.05   0.0258</span></a>
+<a class="sourceLine" id="cb41-12" title="12"><span class="co">#&gt; 9 hepg2    drug4            C2       16  0.213 0.072   33.83   0.0187</span></a>
+<a class="sourceLine" id="cb41-13" title="13"><span class="co">#&gt;   significance</span></a>
+<a class="sourceLine" id="cb41-14" title="14"><span class="co">#&gt; 1             </span></a>
+<a class="sourceLine" id="cb41-15" title="15"><span class="co">#&gt; 2          Yes</span></a>
+<a class="sourceLine" id="cb41-16" title="16"><span class="co">#&gt; 3          Yes</span></a>
+<a class="sourceLine" id="cb41-17" title="17"><span class="co">#&gt; 4             </span></a>
+<a class="sourceLine" id="cb41-18" title="18"><span class="co">#&gt; 5          Yes</span></a>
+<a class="sourceLine" id="cb41-19" title="19"><span class="co">#&gt; 6          Yes</span></a>
+<a class="sourceLine" id="cb41-20" title="20"><span class="co">#&gt; 7             </span></a>
+<a class="sourceLine" id="cb41-21" title="21"><span class="co">#&gt; 8          Yes</span></a>
+<a class="sourceLine" id="cb41-22" title="22"><span class="co">#&gt; 9          Yes</span></a></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
