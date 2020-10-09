@@ -20,7 +20,7 @@ library(bioassays)
 #  setwd(path1)
 
 ## ----files--------------------------------------------------------------------
-filelist <-list("L HEPG2 P3 72HRS.csv","L HEPG2 P3 24HRS.csv") # list of files
+filelist <-list("L_HEPG2_P3_72HRS.csv","L_HEPG2_P3_24HRS.csv") # list of files
 fno<-1 # file number (in fileslist) that is going to be analyzed
 result <- data.frame(stringsAsFactors= FALSE) ## An empty dataframe to dump result
 zzz <- data.frame(stringsAsFactors= FALSE) ## An empty dataframe to dump result
@@ -28,7 +28,7 @@ zzz <- data.frame(stringsAsFactors= FALSE) ## An empty dataframe to dump result
 ## ----readcsv------------------------------------------------------------------
 filename<-extract_filename(filelist[fno])[1]
 filename
-nickname<-extract_filename(filelist[fno], split=" ",end=".csv",remove="",sep="")[2]
+nickname<-extract_filename(filelist[fno], split="_",end=".csv",remove="",sep="")[2]
 nickname
 
 ## ----readcsv2, eval=FALSE-----------------------------------------------------
@@ -67,7 +67,7 @@ heatplate(data,"Plate 1", size=5)
 plate_info<-function(file,i){
   
   file<-file[1]
-  plate<- extract_filename(file,split = " ",end = ".csv", remove = " ", sep=" ")[5]
+  plate<- extract_filename(file,split = "_",end = ".csv", remove = " ", sep=" ")[5]
 
 if(plate == "P2"){
   compound<-"CyclosporinA"   # Concentration of cyclosporinA used for experiment
@@ -196,7 +196,7 @@ dim(rawdata2)
 head(rawdata2)
 
 ## ----384 metadata, eval=FALSE-------------------------------------------------
-#  metadata2<-read.csv("metafile 384 plate.csv",stringsAsFactors = FALSE,strip.white = TRUE,
+#  metadata2<-read.csv("metafile_384_plate.csv",stringsAsFactors = FALSE,strip.white = TRUE,
 #                     na.strings = c("NA",""),header = TRUE)
 #  head(metadata2)
 #  

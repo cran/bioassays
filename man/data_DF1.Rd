@@ -5,7 +5,7 @@
 \alias{data_DF1}
 \title{Data of 96 well plate.}
 \format{
-A data frame with 96 rows and 10 variables
+{ A data frame with 96 rows and 10 variables
 \describe{
 \item{row}{Row number of multi well well plate.}
 \item{col}{Column number of multi well plate.}
@@ -19,13 +19,14 @@ A data frame with 96 rows and 10 variables
 \item{blankminus}{Blank reduced OD (value - mean(blank))}
 }
 }
+}
 \source{
-{User generated dataframe of the 96 well plate.}
+User generated dataframe of the 96 well plate.
 }
 \usage{
 data_DF1
 }
 \description{
-A complete dataset containing both metadata and spectrophotometer reading.
+A complete dataset containing both metadata and spectrophotometer reading
 }
 \keyword{datasets}

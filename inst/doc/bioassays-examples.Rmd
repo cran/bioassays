@@ -1,11 +1,14 @@
 ---
 title: "Cellular assays using ‘bioassays’ package in R"
 author: "Anwar Azad Palakkan, Jamie Davies"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{bioassays-examples}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -35,7 +38,7 @@ library(nplr)# for the standard curve fitting
 
 # Introduction
 
-In a cell culture lab various cellular assays are performed. The package "bioassays" will help to analyse the results of these experiments performed in multiwell plates. The functions in this package can be used to summarise data from any multiwell plate, and by incorporating them in a loop several plates can be analyzed automatically. Two examples are shown in this article.
+In a cell culture lab various cellular assays are performed. The package "bioassays" will help to analyse the results of these experiments performed in multiwell plates. The functions in this package can be used to summarise data from any multiwell plate, and by incorporating them in a loop several plates can be analyzed automatically. Two examples are shown in this article. All the csv files used for the examples are availble in the folder exdata (inst/exdata).
 
 
 # Example 1: Analysing result from a 96 well plate
@@ -53,11 +56,11 @@ setwd(path1)
 
 Read files
 
-Files can be read using the codes below. Files need to be in .csv format. In this examples file names reflect the type of assay used. For example  *"L DIFF P3 72HRS.csv"* :*L* is assay code (Lactate assay), *DIFF* differentiation (type of cells used), *p3*: Plate 3 (each plate represent specific compounds tested), *72HRS* 72hrs treatment with compound. These information will help to summarise the results.
+Files can be read using the codes below. Files need to be in .csv format. In this examples file names reflect the type of assay used. For example  *"L_DIFF_P3_72HRS.csv"* :*L* is assay code (Lactate assay), *DIFF* differentiation (type of cells used), *p3*: Plate 3 (each plate represent specific compounds tested), *72HRS* 72hrs treatment with compound. These information will help to summarise the results.
 
 
 ```{r files}
-filelist <-list("L HEPG2 P3 72HRS.csv","L HEPG2 P3 24HRS.csv") # list of files
+filelist <-list("L_HEPG2_P3_72HRS.csv","L_HEPG2_P3_24HRS.csv") # list of files
 fno<-1 # file number (in fileslist) that is going to be analyzed
 result <- data.frame(stringsAsFactors= FALSE) ## An empty dataframe to dump result
 zzz <- data.frame(stringsAsFactors= FALSE) ## An empty dataframe to dump result
@@ -68,7 +71,7 @@ zzz <- data.frame(stringsAsFactors= FALSE) ## An empty dataframe to dump result
 ```{r readcsv}
 filename<-extract_filename(filelist[fno])[1]
 filename
-nickname<-extract_filename(filelist[fno], split=" ",end=".csv",remove="",sep="")[2]
+nickname<-extract_filename(filelist[fno], split="_",end=".csv",remove="",sep="")[2]
 nickname
 ```
 
@@ -135,7 +138,7 @@ An example function is given below which will determine the compound,concentrati
 plate_info<-function(file,i){
   
   file<-file[1]
-  plate<- extract_filename(file,split = " ",end = ".csv", remove = " ", sep=" ")[5]
+  plate<- extract_filename(file,split = "_",end = ".csv", remove = " ", sep=" ")[5]
 
 if(plate == "P2"){
   compound<-"CyclosporinA"   # Concentration of cyclosporinA used for experiment
@@ -336,7 +339,7 @@ head(rawdata2)
 Reading metadata
 
 ```{r 384 metadata, eval=FALSE}
-metadata2<-read.csv("metafile 384 plate.csv",stringsAsFactors = FALSE,strip.white = TRUE, 
+metadata2<-read.csv("metafile_384_plate.csv",stringsAsFactors = FALSE,strip.white = TRUE, 
                    na.strings = c("NA",""),header = TRUE)
 head(metadata2)
 

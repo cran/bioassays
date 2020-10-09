@@ -3,12 +3,12 @@
 \docType{data}
 \name{rawdata96}
 \alias{rawdata96}
-\title{rawdata of 96 well plate.}
+\title{Rawdata of 96 well plate.}
 \format{
 A data frame with 8 rows and 13 columns: First column shows 'row name'.
 }
 \source{
-{Spectrophotometer output reading (OD) of 96 well plate.}
+Spectrophotometer output reading (OD) of 96 well plate.
 }
 \usage{
 rawdata96
